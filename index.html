@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SlideVault</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f8f9fa;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input,
+    button,
+    select {
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+
+    .slide {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+
+    #authSection,
+    #uploadSection {
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <div id="appSection">
+    <h1>📚 SlideVault</h1>
+    <h3>=> mik3L</h3>
+    <h4>NETWORKING AND SYSTEMS ADMINISTRATION</h4>
+
+
+    <div id="authSection">
+      <h2>Login / Sign Up</h2>
+      <input type="email" id="emailInput" placeholder="Email" /><br>
+      <input type="password" id="passwordInput" placeholder="Password" /><br>
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+      <button id="logoutBtn" style="display:none;">Logout</button>
+    </div>
+
+    <div id="uploadSection" style="display:none;">
+      <input type="file" id="fileInput"><br>
+      <input type="text" id="courseInput" placeholder="Course Name"><br>
+      <input type="text" id="topicInput" placeholder="Topic Title"><br>
+      <button id="uploadBtn">Upload Slide</button>
+      <hr>
+      <input type="text" id="searchInput" placeholder="Search by topic or course..." oninput="renderSlides()">
+      <div id="slidesContainer"></div>
+    </div>
+  </div>
+  <script>
+    localStorage.removeItem('supabase.auth.token'); // clear stale session
+  </script>
+  <script type="module">
+    import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://hkxdreqwqasmjnhmdqou.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhreGRyZXF3cWFzbWpuaG1kcW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2ODI5NTIsImV4cCI6MjA2NDI1ODk1Mn0.LFvfD3VMAc0EXY6WdUVXf65HwSnzvdLXO4oBT7wYrWo';
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
+
+
+    const bucketName = 'slides';
+    const tableName = 'CourseTable';
+
+    // UI Buttons
+    document.getElementById('signupBtn').addEventListener('click', signUp);
+    document.getElementById('loginBtn').addEventListener('click', login);
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    document.getElementById('uploadBtn').addEventListener('click', uploadFile);
+
+    async function signUp() {
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('passwordInput').value;
+      const {error} = await supabase.auth.signUp({email, password});
+      if (error) alert('Sign up error: ' + error.message);
+      else alert('Sign up successful! Check your email.');
+    }
+
+    async function login() {
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('passwordInput').value;
+      const {data, error} = await supabase.auth.signInWithPassword({email, password});
+      if (error) alert('Login error: ' + error.message);
+      else updateUI(data.session);
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      updateUI(null);
+    }
+
+    async function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      const course = document.getElementById('courseInput').value.trim();
+      const topic = document.getElementById('topicInput').value.trim();
+
+      if (!file || !course) {
+        alert('Please select a file and enter a course name.');
+        return;
+      }
+
+      const filePath = `${Date.now()}_${file.name}`;
+      const {error: uploadError} = await supabase.storage.from(bucketName).upload(filePath, file);
+
+      if (uploadError) {
+        alert('Upload error: ' + uploadError.message);
+        return;
+      }
+
+      const {data: urlData} = supabase.storage.from(bucketName).getPublicUrl(filePath);
+      const publicUrl = urlData.publicUrl;
+
+      const {error: insertError} = await supabase
+        .from(tableName)
+        .insert([{name: file.name, url: publicUrl, course: course, topic: topic}]);
+
+      if (insertError) {
+        alert('Insert error: ' + insertError.message);
+        return;
+      }
+
+      alert('Upload successful!');
+      await loadSlides();
+    }
+
+    async function loadSlides() {
+      const {data: slides, error} = await supabase
+        .from(tableName)
+        .select('*')
+        .order('created_at', {ascending: false});
+
+      if (error) {
+        console.error('Error fetching slides:', error.message);
+        if (error.message === 'JWT expired') {
+          alert('Session expired. Please log in again.');
+          logout();
+        }
+        return;
+      }
+
+      window.allSlides = slides;
+      renderSlides();
+    }
+
+
+    function renderSlides() {
+      const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+      const container = document.getElementById('slidesContainer');
+      container.innerHTML = '';
+
+      const filtered = (window.allSlides || []).filter(slide => {
+        const name = slide.name?.toLowerCase() || '';
+        const course = slide.course?.toLowerCase() || '';
+        const topic = slide.topic?.toLowerCase() || '';
+        return name.includes(searchTerm) || course.includes(searchTerm) || topic.includes(searchTerm);
+      });
+
+      if (filtered.length === 0) {
+        container.innerText = 'No matching slides.';
+        return;
+      }
+
+      filtered.forEach(slide => {
+        const item = document.createElement('div');
+        item.className = 'slide';
+        item.innerHTML = `
+        <p><strong>${slide.name || 'Untitled'}</strong> (${slide.course || 'Unknown course'})</p>
+        <p>${slide.topic || ''}</p>
+        <a href="${slide.url}" target="_blank">Open Slide</a>
+      `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateUI(session) {
+      const isLoggedIn = !!session;
+      console.log("updateUI called. session:", session);
+      console.log("Is logged in?", isLoggedIn);
+
+      const authSection = document.getElementById('authSection');
+      const uploadSection = document.getElementById('uploadSection');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      if (isLoggedIn) {
+        authSection.style.display = 'none';
+        uploadSection.style.display = 'block';
+        logoutBtn.style.display = 'inline-block';
+        loadSlides();
+      } else {
+        authSection.style.display = 'block';
+        uploadSection.style.display = 'none';
+        logoutBtn.style.display = 'none';
+        document.getElementById('slidesContainer').innerHTML = '';
+      }
+    }
+
+    // On page load
+    supabase.auth.getSession().then(({data, error}) => {
+      const session = data?.session;
+      console.log("updateUI called. session:", session);
+      console.log("Is logged in?", !!session);
+      updateUI(session);
+    });
+
+    // Listen for login/logout and token refresh
+    supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state change:", event);
+      updateUI(session);
+    });
+
+  </script>
+
+</body>
+
+</html>
