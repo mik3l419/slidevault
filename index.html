@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SlideVault</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f8f9fa;
+    }
+
+    h1 { color: #333; }
+
+    input, button {
+      padding: 0.5rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+    }
+
+    .slide {
+      background: white;
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 8px;
+    }
+
+    #authSection, #uploadSection {
+      margin-bottom: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="appSection">
+    <h1>📚 SlideVault</h1>
+    <h5>
+      <p>Welcome to 📚 SlideVault!</p>
+      This is a slide vault created and designed by mik3L to help students, especially those in Networking, efficiently manage and access shared slides. The platform aims to streamline collaboration and knowledge sharing. Hope you find it useful.
+    </h5>
+    <h4>BSc. NETWORKING AND SYSTEMS ADMINISTRATION</h4>
+    <h4>Lecture Slides</h4>
+    <p id="welcomeMessage" style="display: none;">
+      Input course title in the search box to filter...
+    </p>
+
+    <div id="authSection">
+      <h2>Login / Sign Up</h2>
+      <input type="email" id="emailInput" placeholder="Email" /><br>
+      <input type="password" id="passwordInput" placeholder="Password" /><br>
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Sign Up</button>
+      <button id="logoutBtn" style="display:none;">Logout</button>
+    </div>
+
+    <div id="uploadSection" style="display:none;">
+      <div id="adminUpload">
+        <input type="file" id="fileInput"><br>
+        <input type="text" id="topicInput" placeholder="Topic Title"><br>
+        <input type="text" id="courseInput" placeholder="Course Name"><br>
+        <button id="uploadBtn">Upload Slide</button>
+        <hr>
+      </div>
+      <input type="text" id="searchInput" placeholder="Search by Course title..." oninput="renderSlides()">
+      <div id="slidesContainer"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://hkxdreqwqasmjnhmdqou.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhreGRyZXF3cWFzbWpuaG1kcW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2ODI5NTIsImV4cCI6MjA2NDI1ODk1Mn0.LFvfD3VMAc0EXY6WdUVXf65HwSnzvdLXO4oBT7wYrWo';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const adminEmail = "vaztomundo360@gmail.com";
+    const bucketName = 'slides';
+    const tableName = 'CourseTable';
+
+    // Auth handlers
+    document.getElementById('signupBtn').onclick = signUp;
+    document.getElementById('loginBtn').onclick = login;
+    document.getElementById('logoutBtn').onclick = logout;
+    document.getElementById('uploadBtn').onclick = uploadFile;
+
+    async function signUp() {
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('passwordInput').value;
+      if (!email || !password) return alert('Email and password required.');
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) return alert(`Signup failed: ${error.message}`);
+      alert('Signup successful! Please check your email to confirm.');
+    }
+
+    async function login() {
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('passwordInput').value;
+      if (!email || !password) return alert('Email and password required.');
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) return alert(`Login failed: ${error.message}`);
+      updateUI(data.session);
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      updateUI(null);
+    }
+
+    async function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      const course = document.getElementById('courseInput').value.trim();
+      const topic = document.getElementById('topicInput').value.trim();
+      if (!file || !course) return alert('Select file and enter course name.');
+
+      const filePath = `${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage.from(bucketName).upload(filePath, file);
+      if (uploadError) return alert('Upload error: ' + uploadError.message);
+
+      const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+      const publicUrl = urlData.publicUrl;
+
+      const { error: insertError } = await supabase.from(tableName).insert([
+        { name: file.name, url: publicUrl, course, topic }
+      ]);
+      if (insertError) return alert('Insert error: ' + insertError.message);
+
+      alert('Upload successful!');
+      await loadSlides();
+    }
+
+    async function loadSlides() {
+      const { data: slides, error } = await supabase.from(tableName).select('*').order('created_at', { ascending: false });
+      if (error) return console.error('Slide load error:', error.message);
+      window.allSlides = slides;
+      renderSlides();
+    }
+
+    window.renderSlides = function renderSlides() {
+      const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+      const container = document.getElementById('slidesContainer');
+      container.innerHTML = '';
+
+      const filtered = (window.allSlides || []).filter(slide => {
+        return [slide.name, slide.course, slide.topic].some(
+          val => val?.toLowerCase().includes(searchTerm)
+        );
+      });
+
+      filtered.sort((a, b) => (a.topic || '').localeCompare(b.topic || ''));
+
+      if (filtered.length === 0) {
+        container.innerText = 'No matching slides.';
+        return;
+      }
+
+      filtered.forEach(slide => {
+        const item = document.createElement('div');
+        item.className = 'slide';
+        item.innerHTML = `
+          <p><strong>${slide.name || 'Untitled'}</strong> (${slide.course || 'Unknown'})</p>
+          <p>${slide.topic || ''}</p>
+          <a href="${slide.url}" target="_blank">Open Slide</a>
+        `;
+        container.appendChild(item);
+      });
+    };
+
+    async function updateUI(session) {
+      const isLoggedIn = !!session;
+      document.getElementById('authSection').style.display = isLoggedIn ? 'none' : 'block';
+      document.getElementById('uploadSection').style.display = isLoggedIn ? 'block' : 'none';
+      document.getElementById('logoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+      document.getElementById('welcomeMessage').style.display = isLoggedIn ? 'block' : 'none';
+
+      if (isLoggedIn) {
+        const { data: { user } } = await supabase.auth.getUser();
+        const isAdmin = user?.email === adminEmail;
+        document.getElementById('adminUpload').style.display = isAdmin ? 'block' : 'none';
+        loadSlides();
+      } else {
+        document.getElementById('slidesContainer').innerHTML = '';
+      }
+    }
+
+    const { data: { session } } = await supabase.auth.getSession();
+    updateUI(session);
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      updateUI(session);
+    });
+  </script>
+</body>
+</html>
