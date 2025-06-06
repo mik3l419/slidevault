@@ -41,7 +41,8 @@
       This is a slide vault created and designed by mik3L to help students, especially those in Networking, efficiently manage and access shared slides. The platform aims to streamline collaboration and knowledge sharing. Hope you find it useful :)
     </h5>
     <h4>BSc. NETWORKING AND SYSTEMS ADMINISTRATION</h4>
-    <h4>Lecture Slides</h4>
+    <h4 id="lectureSlidesHeading" style="display: none;">Lecture Slides</h4>
+
     <p id="welcomeMessage" style="display: none;">
       Input course title in the search box to filter...
     </p>
@@ -50,6 +51,7 @@
       <h2>Login / Sign Up</h2>
       <input type="email" id="emailInput" placeholder="Email" /><br>
       <input type="password" id="passwordInput" placeholder="Password" /><br>
+      <input type="checkbox" id="togglePassword"> Show Password<br>
       <button id="loginBtn">Login</button>
       <button id="signupBtn">Sign Up</button>
       <button id="logoutBtn" style="display:none;">Logout</button>
@@ -84,6 +86,11 @@
     document.getElementById('loginBtn').onclick = login;
     document.getElementById('logoutBtn').onclick = logout;
     document.getElementById('uploadBtn').onclick = uploadFile;
+    document.getElementById('togglePassword').addEventListener('change', function () {
+  const passwordInput = document.getElementById('passwordInput');
+  passwordInput.type = this.checked ? 'text' : 'password';
+});
+
 
     async function signUp() {
       const email = document.getElementById('emailInput').value;
@@ -173,6 +180,8 @@
       document.getElementById('uploadSection').style.display = isLoggedIn ? 'block' : 'none';
       document.getElementById('logoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
       document.getElementById('welcomeMessage').style.display = isLoggedIn ? 'block' : 'none';
+      document.getElementById('lectureSlidesHeading').style.display = isLoggedIn ? 'block' : 'none';
+
 
       if (isLoggedIn) {
         const { data: { user } } = await supabase.auth.getUser();
