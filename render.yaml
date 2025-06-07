@@ -1,9 +1,5 @@
 services:
   - type: web
     name: slidevault-web
-    runtime: node  # Explicitly specify Node.js
     buildCommand: npm install
     startCommand: npm start
-    envVars:
-      - key: PORT
-        value: 3000
