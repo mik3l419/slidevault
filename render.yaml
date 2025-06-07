@@ -1,7 +1,7 @@
 services:
   - type: web
     name: slidevault-web
-    runtime: node
+    runtime: node  # Explicitly specify Node.js
     buildCommand: npm install
     startCommand: npm start
     envVars:
