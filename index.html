@@ -410,7 +410,7 @@
       localStorage.setItem('theme', theme);
     });
 
-    // Your existing Supabase and app logic remains the same
+    // Your existing Supabase and app logic
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://hkxdreqwqasmjnhmdqou.supabase.co';
@@ -446,12 +446,12 @@
       if (!email || !password) return alert('Email and password required.');
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return alert(`Login failed: ${error.message}`);
-      updateUI(data.session);
+      await updateUI(data.session); // Ensure UI updates after login
     }
 
     async function logout() {
       await supabase.auth.signOut();
-      updateUI(null);
+      await updateUI(null);
     }
 
     async function uploadFile() {
@@ -521,33 +521,45 @@
 
     async function updateUI(session) {
       const isLoggedIn = !!session;
-      const { data: { user } } = await supabase.auth.getUser();
-      const isAdmin = user?.email === adminEmail;
-
-      document.getElementById('authSection').classList.toggle('hidden', isLoggedIn);
-      document.getElementById('logoutBtn').classList.toggle('hidden', !isLoggedIn);
-      document.getElementById('welcomeMessage').classList.toggle('hidden', !isLoggedIn);
-      document.getElementById('lectureSlidesHeading').classList.toggle('hidden', !isLoggedIn);
-
-      // Show upload section only for admin
+      const authSection = document.getElementById('authSection');
       const uploadSection = document.getElementById('uploadSection');
-      uploadSection.style.display = isAdmin ? 'block' : 'none';
+      const logoutBtn = document.getElementById('logoutBtn');
+      const welcomeMessage = document.getElementById('welcomeMessage');
+      const lectureSlidesHeading = document.getElementById('lectureSlidesHeading');
+      const adminUpload = document.getElementById('adminUpload');
 
       if (isLoggedIn) {
-        document.getElementById('adminUpload').style.display = isAdmin ? 'block' : 'none';
-        loadSlides();
+        const { data: { user } } = await supabase.auth.getUser();
+        const isAdmin = user?.email === adminEmail;
+
+        // Hide auth section and show logout for all logged-in users
+        authSection.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        welcomeMessage.style.display = 'block';
+        lectureSlidesHeading.style.display = 'block';
+
+        // Show upload section only for admin
+        uploadSection.style.display = isAdmin ? 'block' : 'none';
+        adminUpload.style.display = isAdmin ? 'block' : 'none';
+
+        await loadSlides();
       } else {
+        // Show auth section and hide everything else when logged out
+        authSection.style.display = 'block';
+        uploadSection.style.display = 'none';
+        logoutBtn.style.display = 'none';
+        welcomeMessage.style.display = 'none';
+        lectureSlidesHeading.style.display = 'none';
         document.getElementById('slidesContainer').innerHTML = '';
-        uploadSection.style.display = 'none'; // Ensure it's hidden when logged out
       }
     }
 
     const { data: { session } } = await supabase.auth.getSession();
-    updateUI(session);
+    await updateUI(session);
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      updateUI(session);
+    supabase.auth.onAuthStateChange(async (_event, session) => {
+      await updateUI(session);
     });
   </script>
 </body>
-</html>
+          </html>
