@@ -471,11 +471,11 @@
           <input type="file" id="fileInput">
         </div>
         <div class="form-group">
-          <label for="courseInput">Course Name</label>
+          <label for="courseInput">Topic Title</label>
           <input type="text" id="courseInput" placeholder="Enter course name">
         </div>
         <div class="form-group">
-          <label for="topicInput">Topic Title</label>
+          <label for="topicInput">Course Name</label>
           <input type="text" id="topicInput" placeholder="Enter topic title">
         </div>
         <button id="uploadBtn" class="btn btn-primary">Upload Slide</button>
@@ -600,9 +600,9 @@
         const item = document.createElement('div');
         item.className = 'slide';
         item.innerHTML = `
-          <h3>${slide.name || 'Untitled'}</h3>
-          <p><strong>Course:</strong> ${slide.topic || 'Unknown'}</p>
-          <p><strong>Topic:</strong> ${slide.course || 'Not specified'}</p>
+          <h3>${slide.course || 'Untitled'}</h3>
+          <p><strong>Topic:</strong> ${slide.topic || 'Unknown'}</p>
+         
           <a href="${slide.url}" target="_blank">View Slide →</a>
         `;
         container.appendChild(item);
