@@ -21,7 +21,9 @@
       --warning: #f8961e;
       --danger: #f72585;
       --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --transition: all 0.3s ease;
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --transition: all 0.3s ease-in-out;
     }
 
     * {
@@ -33,10 +35,11 @@
     body {
       font-family: 'Inter', sans-serif;
       line-height: 1.6;
-      background-color: var(--light);
+      background: linear-gradient(135deg, #e0e7ff, #f5f7fa);
       color: var(--dark);
       min-height: 100vh;
       padding: 0;
+      overflow-x: hidden;
       transition: var(--transition);
     }
 
@@ -44,6 +47,8 @@
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
+      position: relative;
+      z-index: 1;
     }
 
     header {
@@ -51,6 +56,12 @@
       margin-bottom: 2rem;
       padding-bottom: 1rem;
       border-bottom: 1px solid var(--light-gray);
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
@@ -62,6 +73,16 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
+      text-shadow: 0 2px 4px rgba(67, 97, 238, 0.3);
+    }
+
+    h1 span {
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
     h2 {
@@ -69,44 +90,139 @@
       font-weight: 600;
       color: var(--dark);
       margin-bottom: 1rem;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
-    h4, h5 {
-      font-weight: 500;
-      color: var(--gray);
-      margin-bottom: 1rem;
-    }
-
-    p {
-      margin-bottom: 1rem;
-      color: var(--gray);
-    }
-
-    /* Auth Section */
-    #authSection {
+    #authSection, #uploadSection {
       max-width: 500px;
       margin: 0 auto 3rem;
-      background: white;
+      backdrop-filter: blur(10px);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
       padding: 2rem;
-      border-radius: 12px;
+      border-radius: 15px;
       box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      transform-style: preserve-3d;
+    }
+
+    #authSection:hover, #uploadSection:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+      transform: translateZ(5px) scale(1.02);
+    }
+
+    /* NEW SLIDES LAYOUT */
+    #slidesContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .slide-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .slide-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .slide-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .slide-header h3 {
+      font-size: 1.2rem;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .slide-body {
+      padding: 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-meta {
+      margin-bottom: 1rem;
+    }
+
+    .slide-meta p {
+      margin: 0.5rem 0;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .slide-meta strong {
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    .slide-actions {
+      margin-top: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .slide-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      text-decoration: none;
       transition: var(--transition);
     }
 
-    #authSection:hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    .slide-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
     }
 
-    /* Form Elements */
-    .form-group {
-      margin-bottom: 1.5rem;
+    .slide-btn i {
+      margin-right: 0.5rem;
     }
 
-    label {
+    .no-slides {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+    }
+
+    /* Rest of your existing styles... */
+    .form-group label {
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
       color: var(--dark);
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     input[type="email"],
@@ -118,6 +234,7 @@
       border: 1px solid var(--light-gray);
       border-radius: 8px;
       font-size: 1rem;
+      background: rgba(255, 255, 255, 0.9);
       transition: var(--transition);
     }
 
@@ -126,7 +243,8 @@
     input[type="text"]:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+      transform: scale(1.01);
     }
 
     .checkbox-group {
@@ -136,47 +254,66 @@
       margin: 1rem 0;
     }
 
-    /* Buttons */
     .btn {
       display: inline-block;
       padding: 0.75rem 1.5rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 25px;
       font-size: 1rem;
       font-weight: 500;
       cursor: pointer;
       transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+
+    .btn:hover::after {
+      width: 200px;
+      height: 200px;
     }
 
     .btn-primary {
-      background-color: var(--primary);
+      background: linear-gradient(45deg, var(--primary), var(--accent));
       color: white;
     }
 
     .btn-primary:hover {
-      background-color: var(--primary-dark);
-      transform: translateY(-2px);
+      background: linear-gradient(45deg, var(--primary-dark), var(--secondary));
+      transform: translateY(-3px);
     }
 
     .btn-secondary {
-      background-color: white;
+      background: var(--glass-bg);
       color: var(--primary);
-      border: 1px solid var(--primary);
+      border: 1px solid var(--glass-border);
     }
 
     .btn-secondary:hover {
-      background-color: var(--light);
-      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-3px);
     }
 
     .btn-danger {
-      background-color: var(--danger);
+      background: var(--danger);
       color: white;
     }
 
     .btn-danger:hover {
       opacity: 0.9;
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
 
     .btn-group {
@@ -185,68 +322,6 @@
       margin-top: 1rem;
     }
 
-    /* Upload Section */
-    #uploadSection {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: var(--card-shadow);
-      margin-bottom: 2rem;
-    }
-
-    #adminUpload {
-      margin-bottom: 2rem;
-      padding-bottom: 2rem;
-      border-bottom: 1px solid var(--light-gray);
-    }
-
-    /* Slides Container */
-    #slidesContainer {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .slide {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: var(--card-shadow);
-      transition: var(--transition);
-      border: 1px solid var(--light-gray);
-    }
-
-    .slide:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    }
-
-    .slide h3 {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-      color: var(--dark);
-    }
-
-    .slide p {
-      margin-bottom: 0.75rem;
-      color: var(--gray);
-    }
-
-    .slide a {
-      display: inline-block;
-      color: var(--primary);
-      font-weight: 500;
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    .slide a:hover {
-      color: var(--primary-dark);
-      text-decoration: underline;
-    }
-
-    /* Search Input */
     #searchInput {
       width: 100%;
       max-width: 500px;
@@ -256,62 +331,49 @@
       border-radius: 50px;
       border: 1px solid var(--light-gray);
       font-size: 1rem;
-    }
-
-    /* Utility Classes */
-    .text-center {
-      text-align: center;
-    }
-
-    .mt-2 {
-      margin-top: 2rem;
-    }
-
-    .mb-2 {
-      margin-bottom: 2rem;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    /* Dark Mode Toggle */
-    .dark-mode-toggle {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: var(--light-gray);
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      background: var(--glass-bg);
       transition: var(--transition);
-      z-index: 100;
     }
 
-    /* Dark Mode Styles */
+    #searchInput:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+      transform: scale(1.02);
+    }
+
     body.dark-mode {
-      background-color: #121212;
+      background: linear-gradient(135deg, #121212, #1e1e1e);
       color: #e0e0e0;
     }
 
     body.dark-mode #authSection,
     body.dark-mode #uploadSection,
-    body.dark-mode .slide {
-      background-color: #1e1e1e;
-      border-color: #333;
-      color: #e0e0e0;
+    body.dark-mode .slide-card {
+      background: rgba(30, 30, 30, 0.9);
+      border-color: #444;
+    }
+
+    body.dark-mode .slide-card {
+      background: #2d2d2d;
+    }
+
+    body.dark-mode .slide-header {
+      background: linear-gradient(135deg, #3a56d4, #2f2ba8);
+    }
+
+    body.dark-mode .slide-meta p {
+      color: #b0b0b0;
+    }
+
+    body.dark-mode .slide-meta strong {
+      color: #ffffff;
     }
 
     body.dark-mode input,
     body.dark-mode select,
     body.dark-mode textarea {
-      background-color: #2d2d2d;
-      border-color: #444;
+      background: #2d2d2d;
+      border-color: #555;
       color: #e0e0e0;
     }
 
@@ -328,23 +390,38 @@
       color: #b0b0b0;
     }
 
-    /* Responsive Design */
+    .dark-mode-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      z-index: 100;
+      box-shadow: var(--card-shadow);
+    }
+
+    .dark-mode-toggle:hover {
+      transform: rotate(360deg);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+
     @media (max-width: 768px) {
-      .container {
-        padding: 1rem;
-      }
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      #slidesContainer {
-        grid-template-columns: 1fr;
-      }
-
-      .btn-group {
-        flex-direction: column;
-      }
+      .container { padding: 1rem; }
+      h1 { font-size: 2rem; }
+      #slidesContainer { grid-template-columns: 1fr; }
+      .btn-group { flex-direction: column; }
     }
   </style>
 </head>
@@ -394,12 +471,12 @@
           <input type="file" id="fileInput">
         </div>
         <div class="form-group">
-          <label for="courseInput">Course Name</label>
-          <input type="text" id="courseInput" placeholder="Enter course name">
-        </div>
-        <div class="form-group">
           <label for="topicInput">Topic Title</label>
           <input type="text" id="topicInput" placeholder="Enter topic title">
+        </div>
+        <div class="form-group">
+          <label for="courseInput">Course Name</label>
+          <input type="text" id="courseInput" placeholder="Enter course name">
         </div>
         <button id="uploadBtn" class="btn btn-primary">Upload Slide</button>
         <hr class="mt-2 mb-2">
@@ -428,7 +505,7 @@
       localStorage.setItem('theme', theme);
     });
 
-    // Your existing Supabase and app logic remains the same
+    // Your existing Supabase and app logic
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://hkxdreqwqasmjnhmdqou.supabase.co';
@@ -464,19 +541,24 @@
       if (!email || !password) return alert('Email and password required.');
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) return alert(`Login failed: ${error.message}`);
-      updateUI(data.session);
+      await updateUI(data.session); // Ensure UI updates after login
     }
 
     async function logout() {
       await supabase.auth.signOut();
-      updateUI(null);
+      await updateUI(null);
     }
 
     async function uploadFile() {
       const file = document.getElementById('fileInput').files[0];
       const course = document.getElementById('courseInput').value.trim();
       const topic = document.getElementById('topicInput').value.trim();
+      const { data: { user } } = await supabase.auth.getUser();
+
       if (!file || !course) return alert('Select file and enter course name.');
+      if (user?.email !== adminEmail) {
+        return alert('Only the admin (vaztomundo360@gmail.com) can upload slides.');
+      }
 
       const filePath = `${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage.from(bucketName).upload(filePath, file);
@@ -515,46 +597,73 @@
       filtered.sort((a, b) => (a.topic || '').localeCompare(b.topic || ''));
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div class="text-center"><p>No matching slides found.</p></div>';
+        container.innerHTML = '<div class="no-slides"><p>No matching slides found.</p></div>';
         return;
       }
 
       filtered.forEach(slide => {
-        const item = document.createElement('div');
-        item.className = 'slide';
-        item.innerHTML = `
-          <h3>${slide.name || 'Untitled'}</h3>
-          <p><strong>Course:</strong> ${slide.topic || 'Unknown'}</p>
-          <p><strong>Topic:</strong> ${slide.course || 'Not specified'}</p>
-          <a href="${slide.url}" target="_blank">View Slide →</a>
+        const card = document.createElement('div');
+        card.className = 'slide-card';
+        card.innerHTML = `
+          <div class="slide-header">
+            <h3>${slide.course || 'Untitled Course'}</h3>
+          </div>
+          <div class="slide-body">
+            <div class="slide-meta">
+              <p><strong>Document:</strong> ${slide.name || 'Untitled'}</p>
+              ${slide.topic ? `<p><strong>Topic:</strong> ${slide.topic}</p>` : ''}
+            </div>
+            <div class="slide-actions">
+              <a href="${slide.url}" target="_blank" class="slide-btn">
+                <i>📄</i> View Slide
+              </a>
+            </div>
+          </div>
         `;
-        container.appendChild(item);
+        container.appendChild(card);
       });
     };
 
     async function updateUI(session) {
       const isLoggedIn = !!session;
-      document.getElementById('authSection').classList.toggle('hidden', isLoggedIn);
-      document.getElementById('uploadSection').classList.toggle('hidden', !isLoggedIn);
-      document.getElementById('logoutBtn').classList.toggle('hidden', !isLoggedIn);
-      document.getElementById('welcomeMessage').classList.toggle('hidden', !isLoggedIn);
-      document.getElementById('lectureSlidesHeading').classList.toggle('hidden', !isLoggedIn);
+      const authSection = document.getElementById('authSection');
+      const uploadSection = document.getElementById('uploadSection');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const welcomeMessage = document.getElementById('welcomeMessage');
+      const lectureSlidesHeading = document.getElementById('lectureSlidesHeading');
+      const adminUpload = document.getElementById('adminUpload');
 
       if (isLoggedIn) {
         const { data: { user } } = await supabase.auth.getUser();
         const isAdmin = user?.email === adminEmail;
-        document.getElementById('adminUpload').style.display = isAdmin ? 'block' : 'none';
-        loadSlides();
+
+        // Hide auth section and show logout for all logged-in users
+        authSection.classList.add('hidden');
+        logoutBtn.classList.remove('hidden');
+        welcomeMessage.classList.remove('hidden');
+        lectureSlidesHeading.classList.remove('hidden');
+
+        // Show upload section only for admin
+        uploadSection.classList.remove('hidden');
+        adminUpload.style.display = isAdmin ? 'block' : 'none';
+
+        await loadSlides();
       } else {
+        // Show auth section and hide everything else when logged out
+        authSection.classList.remove('hidden');
+        uploadSection.classList.add('hidden');
+        logoutBtn.classList.add('hidden');
+        welcomeMessage.classList.add('hidden');
+        lectureSlidesHeading.classList.add('hidden');
         document.getElementById('slidesContainer').innerHTML = '';
       }
     }
 
     const { data: { session } } = await supabase.auth.getSession();
-    updateUI(session);
+    await updateUI(session);
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      updateUI(session);
+    supabase.auth.onAuthStateChange(async (_event, session) => {
+      await updateUI(session);
     });
   </script>
 </body>
