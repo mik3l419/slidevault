@@ -114,6 +114,104 @@
       transform: translateZ(5px) scale(1.02);
     }
 
+    /* NEW SLIDES LAYOUT */
+    #slidesContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .slide-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .slide-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .slide-header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .slide-header h3 {
+      font-size: 1.2rem;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .slide-body {
+      padding: 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide-meta {
+      margin-bottom: 1rem;
+    }
+
+    .slide-meta p {
+      margin: 0.5rem 0;
+      color: var(--gray);
+      font-size: 0.9rem;
+    }
+
+    .slide-meta strong {
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    .slide-actions {
+      margin-top: auto;
+      display: flex;
+      justify-content: center;
+    }
+
+    .slide-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.6rem 1.2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .slide-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .slide-btn i {
+      margin-right: 0.5rem;
+    }
+
+    .no-slides {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem;
+      color: var(--gray);
+    }
+
+    /* Rest of your existing styles... */
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
@@ -224,56 +322,6 @@
       margin-top: 1rem;
     }
 
-    #slidesContainer {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-      perspective: 1000px;
-    }
-
-    .slide {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 15px;
-      padding: 1.5rem;
-      box-shadow: var(--card-shadow);
-      transition: var(--transition);
-      transform: rotateY(0deg);
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .slide:hover {
-      transform: rotateY(5deg) translateY(-5px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-    }
-
-    .slide h3 {
-      margin-bottom: 0.5rem;
-      color: var(--primary);
-    }
-
-    .slide p {
-      margin-bottom: 0.5rem;
-      flex-grow: 1;
-    }
-
-    .slide a {
-      display: inline-block;
-      margin-top: 1rem;
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-
-    .slide a:hover {
-      color: var(--secondary);
-      transform: translateX(5px);
-    }
-
     #searchInput {
       width: 100%;
       max-width: 500px;
@@ -300,9 +348,25 @@
 
     body.dark-mode #authSection,
     body.dark-mode #uploadSection,
-    body.dark-mode .slide {
+    body.dark-mode .slide-card {
       background: rgba(30, 30, 30, 0.9);
       border-color: #444;
+    }
+
+    body.dark-mode .slide-card {
+      background: #2d2d2d;
+    }
+
+    body.dark-mode .slide-header {
+      background: linear-gradient(135deg, #3a56d4, #2f2ba8);
+    }
+
+    body.dark-mode .slide-meta p {
+      color: #b0b0b0;
+    }
+
+    body.dark-mode .slide-meta strong {
+      color: #ffffff;
     }
 
     body.dark-mode input,
@@ -349,19 +413,15 @@
       background: rgba(255, 255, 255, 0.2);
     }
 
+    .hidden {
+      display: none;
+    }
+
     @media (max-width: 768px) {
       .container { padding: 1rem; }
       h1 { font-size: 2rem; }
       #slidesContainer { grid-template-columns: 1fr; }
       .btn-group { flex-direction: column; }
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .text-center {
-      text-align: center;
     }
   </style>
 </head>
@@ -537,20 +597,30 @@
       filtered.sort((a, b) => (a.topic || '').localeCompare(b.topic || ''));
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div class="text-center"><p>No matching slides found.</p></div>';
+        container.innerHTML = '<div class="no-slides"><p>No matching slides found.</p></div>';
         return;
       }
 
       filtered.forEach(slide => {
-        const item = document.createElement('div');
-        item.className = 'slide';
-        item.innerHTML = `
-          <h3>${slide.name || 'Untitled'}</h3>
-          <p><strong>Course:</strong> ${slide.course || 'Unknown'}</p>
-          ${slide.topic ? `<p><strong>Topic:</strong> ${slide.topic}</p>` : ''}
-          <a href="${slide.url}" target="_blank">View Slide →</a>
+        const card = document.createElement('div');
+        card.className = 'slide-card';
+        card.innerHTML = `
+          <div class="slide-header">
+            <h3>${slide.course || 'Untitled Course'}</h3>
+          </div>
+          <div class="slide-body">
+            <div class="slide-meta">
+              <p><strong>Document:</strong> ${slide.name || 'Untitled'}</p>
+              ${slide.topic ? `<p><strong>Topic:</strong> ${slide.topic}</p>` : ''}
+            </div>
+            <div class="slide-actions">
+              <a href="${slide.url}" target="_blank" class="slide-btn">
+                <i>📄</i> View Slide
+              </a>
+            </div>
+          </div>
         `;
-        container.appendChild(item);
+        container.appendChild(card);
       });
     };
 
@@ -597,4 +667,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
