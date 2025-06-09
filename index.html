@@ -601,9 +601,11 @@
         item.className = 'slide';
         item.innerHTML = `
           <h3>${slide.course || 'Untitled'}</h3>
-          <p><strong>Topic:</strong> ${slide.topic || 'Unknown'}</p>
+          <p><strong>Course:</strong> ${slide.topic || 'Unknown'}</p>
          
-          <a href="${slide.url}" target="_blank">View Slide →</a>
+          a href="${slide.url}" target="_blank" class="slide-btn">
+                <i>📄</i> View Slide
+              </a>
         `;
         container.appendChild(item);
       });
