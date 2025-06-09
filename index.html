@@ -240,11 +240,38 @@
       box-shadow: var(--card-shadow);
       transition: var(--transition);
       transform: rotateY(0deg);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .slide:hover {
       transform: rotateY(5deg) translateY(-5px);
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+    }
+
+    .slide h3 {
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .slide p {
+      margin-bottom: 0.5rem;
+      flex-grow: 1;
+    }
+
+    .slide a {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .slide a:hover {
+      color: var(--secondary);
+      transform: translateX(5px);
     }
 
     #searchInput {
@@ -327,6 +354,14 @@
       h1 { font-size: 2rem; }
       #slidesContainer { grid-template-columns: 1fr; }
       .btn-group { flex-direction: column; }
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .text-center {
+      text-align: center;
     }
   </style>
 </head>
@@ -512,7 +547,7 @@
         item.innerHTML = `
           <h3>${slide.name || 'Untitled'}</h3>
           <p><strong>Course:</strong> ${slide.course || 'Unknown'}</p>
-          <p><strong>Topic:</strong> ${slide.topic || 'Not specified'}</p>
+          ${slide.topic ? `<p><strong>Topic:</strong> ${slide.topic}</p>` : ''}
           <a href="${slide.url}" target="_blank">View Slide →</a>
         `;
         container.appendChild(item);
@@ -533,23 +568,23 @@
         const isAdmin = user?.email === adminEmail;
 
         // Hide auth section and show logout for all logged-in users
-        authSection.style.display = 'none';
-        logoutBtn.style.display = 'inline-block';
-        welcomeMessage.style.display = 'block';
-        lectureSlidesHeading.style.display = 'block';
+        authSection.classList.add('hidden');
+        logoutBtn.classList.remove('hidden');
+        welcomeMessage.classList.remove('hidden');
+        lectureSlidesHeading.classList.remove('hidden');
 
         // Show upload section only for admin
-        uploadSection.style.display = isAdmin ? 'block' : 'none';
+        uploadSection.classList.remove('hidden');
         adminUpload.style.display = isAdmin ? 'block' : 'none';
 
         await loadSlides();
       } else {
         // Show auth section and hide everything else when logged out
-        authSection.style.display = 'block';
-        uploadSection.style.display = 'none';
-        logoutBtn.style.display = 'none';
-        welcomeMessage.style.display = 'none';
-        lectureSlidesHeading.style.display = 'none';
+        authSection.classList.remove('hidden');
+        uploadSection.classList.add('hidden');
+        logoutBtn.classList.add('hidden');
+        welcomeMessage.classList.add('hidden');
+        lectureSlidesHeading.classList.add('hidden');
         document.getElementById('slidesContainer').innerHTML = '';
       }
     }
@@ -562,4 +597,4 @@
     });
   </script>
 </body>
-          </html>
+  </html>
