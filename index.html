@@ -594,7 +594,7 @@
         );
       });
 
-      filtered.sort((a, b) => (a.course || '').localeCompare(b.course || ''));
+      filtered.sort((a, b) => (a.topic || '').localeCompare(b.topic || ''));
 
       if (filtered.length === 0) {
         container.innerHTML = '<div class="no-slides"><p>No matching slides found.</p></div>';
@@ -611,7 +611,7 @@
           <div class="slide-body">
             <div class="slide-meta">
               <p><strong>Document:</strong> ${slide.name || 'Untitled'}</p>
-              ${slide.course ? `<p><strong>Course:</strong> ${slide.course}</p>` : ''}
+              ${slide.topic ? `<p><strong>Course:</strong> ${slide.topic}</p>` : ''}
             </div>
             <div class="slide-actions">
               <a href="${slide.url}" target="_blank" class="slide-btn">
