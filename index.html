@@ -600,12 +600,17 @@
         const item = document.createElement('div');
         item.className = 'slide';
         item.innerHTML = `
+        <div>
           <h3>${slide.course || 'Untitled'}</h3>
+        </div>
+        <div>
           <p><strong>Course:</strong> ${slide.topic || 'Unknown'}</p>
-         
-          a href="${slide.url}" target="_blank" class="slide-btn">
+         </div>
+         <div>
+          <a href="${slide.url}" target="_blank" class="slide-btn">
                 <i>📄</i> View Slide
               </a>
+          </div>
         `;
         container.appendChild(item);
       });
