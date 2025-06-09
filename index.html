@@ -594,7 +594,7 @@
         );
       });
 
-      filtered.sort((a, b) => (a.topic || '').localeCompare(b.topic || ''));
+      filtered.sort((a, b) => (a.course || '').localeCompare(b.course || ''));
 
       if (filtered.length === 0) {
         container.innerHTML = '<div class="no-slides"><p>No matching slides found.</p></div>';
@@ -606,12 +606,12 @@
         card.className = 'slide-card';
         card.innerHTML = `
           <div class="slide-header">
-            <h3>${slide.course || 'Untitled Course'}</h3>
+            <h3>${slide.topic || 'Untitled Topic'}</h3>
           </div>
           <div class="slide-body">
             <div class="slide-meta">
               <p><strong>Document:</strong> ${slide.name || 'Untitled'}</p>
-              ${slide.topic ? `<p><strong>Topic:</strong> ${slide.topic}</p>` : ''}
+              ${slide.course ? `<p><strong>Course:</strong> ${slide.course}</p>` : ''}
             </div>
             <div class="slide-actions">
               <a href="${slide.url}" target="_blank" class="slide-btn">
