@@ -505,7 +505,7 @@
       localStorage.setItem('theme', theme);
     });
 
-    // Your existing Supabase and app logic remains the same
+    // Your existing Supabase and app logic 
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://hkxdreqwqasmjnhmdqou.supabase.co';
@@ -555,7 +555,7 @@
       const topic = document.getElementById('topicInput').value.trim();
       if (!file || !course) return alert('Select file and enter course name.');
 
-      const filePath = `${Date.now()}_${file.name}`;
+      
       const { error: uploadError } = await supabase.storage.from(bucketName).upload(filePath, file);
       if (uploadError) return alert('Upload error: ' + uploadError.message);
 
