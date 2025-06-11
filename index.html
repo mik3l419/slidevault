@@ -556,9 +556,11 @@
       if (!file || !course) return alert('Select file and enter course name.');
 
       
+      const filePath = `${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage.from(bucketName).upload(filePath, file);
       if (uploadError) return alert('Upload error: ' + uploadError.message);
-
+      const { data: uploadedFile } = await supabase.storage.from(bucketName).getPublicUrl(filePath);
+      
       const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
       const publicUrl = urlData.publicUrl;
 
