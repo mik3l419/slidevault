@@ -413,6 +413,30 @@
       background: rgba(255, 255, 255, 0.2);
     }
 
+    .logout-btn {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    background: var(--glass-bg); /* Match to the page background */
+    color: var(--white); /* Text color */
+    border: 1px solid var(--glass-border); /* Make it consistent with borders */
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    z-index: 100;
+    box-shadow: var(--card-shadow);
+    display: none; /* Initially hidden */
+  }
+  .logout-btn:hover {
+    background: rgba(255, 255, 255, 0.3); /* Slightly darker on hover */
+    transform: translateY(-2px);
+  }
+  .logout-btn.show {
+    display: block; /* Show when needed */
+  }
+
     .hidden {
       display: none;
     }
@@ -427,6 +451,7 @@
 </head>
 <body>
   <button class="dark-mode-toggle" id="darkModeToggle">🌓</button>
+  <button class="logout-btn" id="logoutBtn">Logout</button>
 
   <div class="container">
     <header>
@@ -443,26 +468,20 @@
     </header>
 
     <div id="authSection">
-      <h2>Login / Sign Up</h2>
-      <div class="form-group">
-        <label for="emailInput">Email</label>
-        <input type="email" id="emailInput" placeholder="Enter your email">
-      </div>
-      <div class="form-group">
-        <label for="passwordInput">Password</label>
-        <input type="password" id="passwordInput" placeholder="Enter your password">
-      </div>
-      <div class="checkbox-group">
-        <input type="checkbox" id="togglePassword">
-        <label for="togglePassword">Show Password</label>
-      </div>
-      <div class="btn-group">
-        <button id="loginBtn" class="btn btn-primary">Login</button>
-        <button id="signupBtn" class="btn btn-secondary">Sign Up</button>
-        <button id="logoutBtn" class="btn btn-danger hidden">Logout</button>
-      </div>
-    </div>
-
+  <h2>Enter access password to continue</h2>
+  <div class="form-group">
+    <label for="passwordInput">Password</label>
+    <input type="password" id="passwordInput" placeholder="Enter access password">
+  </div>
+  <div class="checkbox-group">
+    <input type="checkbox" id="togglePassword">
+    <label for="togglePassword">Show Password</label>
+  </div>
+  <div class="btn-group">
+    <button id="loginBtn" class="btn btn-primary">Access page</button>
+    <!-- Sign Up button removed -->
+  </div>
+</div>
     <div id="uploadSection" class="hidden">
       <div id="adminUpload">
         <h2>Upload New Slide</h2>
@@ -517,7 +536,7 @@
     const tableName = 'CourseTable';
 
     // Auth handlers
-    document.getElementById('signupBtn').onclick = signUp;
+    
     document.getElementById('loginBtn').onclick = login;
     document.getElementById('logoutBtn').onclick = logout;
     document.getElementById('uploadBtn').onclick = uploadFile;
@@ -527,25 +546,30 @@
     });
 
     async function signUp() {
-      const email = document.getElementById('emailInput').value;
-      const password = document.getElementById('passwordInput').value;
-      if (!email || !password) return alert('Email and password required.');
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) return alert(`Signup failed: ${error.message}`);
-      alert('Signup successful! Please check your email to confirm.');
+      alert('Please use the login function with your assigned password.');
     }
 
     async function login() {
-      const email = document.getElementById('emailInput').value;
       const password = document.getElementById('passwordInput').value;
-      if (!email || !password) return alert('Email and password required.');
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) return alert(`Login failed: ${error.message}`);
-      updateUI(data.session);
+      if (!password) return alert('Password required.');
+      
+      if (password === '1234') {
+        // Admin login
+        const adminSession = { user: { email: adminEmail }, isAdmin: true };
+        localStorage.setItem('userSession', JSON.stringify(adminSession));
+        updateUI(adminSession);
+      } else if (password === 'GCTU') {
+        // Viewer login
+        const viewerSession = { user: { email: 'viewer@gctu.edu' }, isAdmin: false };
+        localStorage.setItem('userSession', JSON.stringify(viewerSession));
+        updateUI(viewerSession);
+      } else {
+        alert('Invalid password. Use 1234 for admin or GCTU for viewer access.');
+      }
     }
 
     async function logout() {
-      await supabase.auth.signOut();
+      localStorage.removeItem('userSession');
       updateUI(null);
     }
 
@@ -622,13 +646,12 @@
       const isLoggedIn = !!session;
       document.getElementById('authSection').classList.toggle('hidden', isLoggedIn);
       document.getElementById('uploadSection').classList.toggle('hidden', !isLoggedIn);
-      document.getElementById('logoutBtn').classList.toggle('hidden', !isLoggedIn);
+      document.getElementById('logoutBtn').classList.toggle('show', isLoggedIn);
       document.getElementById('welcomeMessage').classList.toggle('hidden', !isLoggedIn);
       document.getElementById('lectureSlidesHeading').classList.toggle('hidden', !isLoggedIn);
 
       if (isLoggedIn) {
-        const { data: { user } } = await supabase.auth.getUser();
-        const isAdmin = user?.email === adminEmail;
+        const isAdmin = session.isAdmin || session.user?.email === adminEmail;
         document.getElementById('adminUpload').style.display = isAdmin ? 'block' : 'none';
         loadSlides();
       } else {
@@ -636,12 +659,10 @@
       }
     }
 
-    const { data: { session } } = await supabase.auth.getSession();
+    // Check for saved session
+    const savedSession = localStorage.getItem('userSession');
+    const session = savedSession ? JSON.parse(savedSession) : null;
     updateUI(session);
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      updateUI(session);
-    });
   </script>
 </body>
 </html>
