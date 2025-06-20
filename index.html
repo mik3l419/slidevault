@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SlideVault</title>
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#4361ee">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SlideVault">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -83,6 +91,16 @@
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
     }
 
     h2 {
@@ -800,10 +818,75 @@
       if (isLoggedIn) {
         const isAdmin = session.isAdmin || session.user?.email === adminEmail;
         document.getElementById('adminUpload').style.display = isAdmin ? 'block' : 'none';
+        setupRealTimeUpdates();
         loadSlides();
       } else {
+        // Cleanup real-time subscription when logged out
+        if (realtimeChannel) {
+          supabase.removeChannel(realtimeChannel);
+          realtimeChannel = null;
+        }
         document.getElementById('slidesContainer').innerHTML = '';
       }
+    }
+
+    // Real-time updates setup
+    let realtimeChannel = null;
+
+    function setupRealTimeUpdates() {
+      if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+      }
+
+      realtimeChannel = supabase
+        .channel('slides-changes')
+        .on('postgres_changes', 
+          { 
+            event: '*', 
+            schema: 'public', 
+            table: tableName 
+          }, 
+          (payload) => {
+            console.log('Real-time update received:', payload);
+            // Clear cache and refresh when database changes
+            localStorage.removeItem('slidesCache');
+            localStorage.removeItem('slidesCacheTime');
+            loadSlides();
+            showUpdateNotification();
+          }
+        )
+        .subscribe();
+    }
+
+    function showUpdateNotification() {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: var(--card-shadow);
+        z-index: 1000;
+        animation: slideInRight 0.3s ease-out;
+      `;
+      notification.innerHTML = `
+        <strong>📄 New slides available!</strong>
+        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">The page has been updated automatically.</p>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      // Remove notification after 3 seconds
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.style.animation = 'slideOutRight 0.3s ease-out';
+          setTimeout(() => notification.remove(), 300);
+        }
+      }, 3000);
     }
 
     // Database keep-alive function
@@ -822,8 +905,77 @@
       await loadSlides();
     };
 
+    // Auto-refresh slides every 2 minutes as backup
+    setInterval(() => {
+      const session = localStorage.getItem('userSession');
+      if (session) {
+        refreshSlides();
+      }
+    }, 120000);
+
     // Keep database active with periodic pings every 4 minutes
     setInterval(keepDatabaseAlive, 240000);
+
+    // Register service worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('SW registered: ', registration);
+          })
+          .catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+
+    // Show install prompt
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      // Show install button/banner
+      const installBanner = document.createElement('div');
+      installBanner.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        background: var(--primary);
+        color: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: var(--card-shadow);
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      `;
+      installBanner.innerHTML = `
+        <span>📱 Install SlideVault as an app for quick access!</span>
+        <button style="background: white; color: var(--primary); border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;" onclick="installApp()">Install</button>
+      `;
+      document.body.appendChild(installBanner);
+      
+      window.installApp = () => {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted the install prompt');
+          }
+          deferredPrompt = null;
+          installBanner.remove();
+        });
+      };
+      
+      // Auto-hide banner after 10 seconds
+      setTimeout(() => {
+        if (installBanner.parentNode) {
+          installBanner.remove();
+        }
+      }, 10000);
+    });
 
     // Check for saved session
     const savedSession = localStorage.getItem('userSession');
