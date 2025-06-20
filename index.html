@@ -114,71 +114,51 @@
       transform: translateZ(5px) scale(1.02);
     }
 
-    /* NEW SLIDES LAYOUT */
     #slidesContainer {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 2rem;
       margin-top: 2rem;
     }
 
-    .slide-card {
+    .slide-item {
       background: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    .slide-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .slide-header {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-
-    .slide-header h3 {
-      font-size: 1.2rem;
-      margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .slide-body {
-      padding: 1.5rem;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .slide-meta {
       margin-bottom: 1rem;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
     }
 
-    .slide-meta p {
-      margin: 0.5rem 0;
+    .slide-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .slide-info {
+      flex: 1;
+    }
+
+    .slide-info h3 {
+      margin: 0 0 0.5rem 0;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .slide-info p {
+      margin: 0.25rem 0;
       color: var(--gray);
       font-size: 0.9rem;
     }
 
-    .slide-meta strong {
+    .slide-info strong {
       color: var(--dark);
       font-weight: 600;
     }
 
     .slide-actions {
-      margin-top: auto;
-      display: flex;
-      justify-content: center;
+      margin-left: 1rem;
+      flex-shrink: 0;
     }
 
     .slide-btn {
@@ -193,6 +173,9 @@
       font-weight: 500;
       text-decoration: none;
       transition: var(--transition);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
     }
 
     .slide-btn:hover {
@@ -236,6 +219,32 @@
       font-size: 1rem;
       background: rgba(255, 255, 255, 0.9);
       transition: var(--transition);
+    }
+
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrapper input {
+      width: 100%;
+      padding-right: 2.5rem;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--gray);
+      transition: var(--transition);
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
     }
 
     input[type="email"]:focus,
@@ -353,19 +362,15 @@
       border-color: #444;
     }
 
-    body.dark-mode .slide-card {
+    body.dark-mode .slide-item {
       background: #2d2d2d;
     }
 
-    body.dark-mode .slide-header {
-      background: linear-gradient(135deg, #3a56d4, #2f2ba8);
-    }
-
-    body.dark-mode .slide-meta p {
+    body.dark-mode .slide-info p {
       color: #b0b0b0;
     }
 
-    body.dark-mode .slide-meta strong {
+    body.dark-mode .slide-info strong {
       color: #ffffff;
     }
 
@@ -414,12 +419,12 @@
     }
 
     .logout-btn {
-    position: fixed;
+    position: absolute;
     top: 1rem;
     left: 1rem;
-    background: var(--glass-bg); /* Match to the page background */
-    color: var(--white); /* Text color */
-    border: 1px solid var(--glass-border); /* Make it consistent with borders */
+    background: var(--glass-bg);
+    color: var(--white);
+    border: 1px solid var(--glass-border);
     border-radius: 8px;
     padding: 0.5rem 1rem;
     font-weight: 600;
@@ -427,7 +432,7 @@
     transition: var(--transition);
     z-index: 100;
     box-shadow: var(--card-shadow);
-    display: none; /* Initially hidden */
+    display: none;
   }
   .logout-btn:hover {
     background: rgba(255, 255, 255, 0.3); /* Slightly darker on hover */
@@ -446,6 +451,31 @@
       h1 { font-size: 2rem; }
       #slidesContainer { grid-template-columns: 1fr; }
       .btn-group { flex-direction: column; }
+    }
+    /* Footer Styles */
+    .footer {
+      background: var(--glass-bg);
+      border-top: 1px solid var(--glass-border);
+      padding: 1rem 0;
+      text-align: center;
+      color: var(--gray);
+      margin-top: 2rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .footer-text {
+      font-size: 0.8rem;
+    }
+
+    .footer-brand {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -471,11 +501,10 @@
   <h2>Enter access password to continue</h2>
   <div class="form-group">
     <label for="passwordInput">Password</label>
-    <input type="password" id="passwordInput" placeholder="Enter access password">
-  </div>
-  <div class="checkbox-group">
-    <input type="checkbox" id="togglePassword">
-    <label for="togglePassword">Show Password</label>
+    <div class="password-wrapper">
+      <input type="password" id="passwordInput" placeholder="Enter access password">
+      <button type="button" class="password-toggle" id="togglePassword">👁️</button>
+    </div>
   </div>
   <div class="btn-group">
     <button id="loginBtn" class="btn btn-primary">Access page</button>
@@ -500,9 +529,10 @@
         <button id="uploadBtn" class="btn btn-primary">Upload Slide</button>
         <hr class="mt-2 mb-2">
       </div>
-      
-      <div class="form-group">
-        <input type="text" id="searchInput" placeholder="Search by course title..." oninput="renderSlides()">
+
+      <div class="form-group" style="display: flex; gap: 1rem; align-items: center;">
+        <input type="text" id="searchInput" placeholder="Search by course title..." oninput="renderSlides()" style="flex: 1;">
+        <button id="refreshBtn" class="btn btn-secondary" onclick="refreshSlides()" style="white-space: nowrap;">🔄 Refresh</button>
       </div>
       <div id="slidesContainer"></div>
     </div>
@@ -512,12 +542,12 @@
     // Dark mode toggle functionality
     const darkModeToggle = document.getElementById('darkModeToggle');
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     // Check for saved user preference or use system preference
     const currentTheme = localStorage.getItem('theme') || 
                         (prefersDarkScheme.matches ? 'dark' : 'light');
     if (currentTheme === 'dark') document.body.classList.add('dark-mode');
-    
+
     darkModeToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
       const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
@@ -536,13 +566,15 @@
     const tableName = 'CourseTable';
 
     // Auth handlers
-    
+
     document.getElementById('loginBtn').onclick = login;
     document.getElementById('logoutBtn').onclick = logout;
     document.getElementById('uploadBtn').onclick = uploadFile;
-    document.getElementById('togglePassword').addEventListener('change', function () {
+    document.getElementById('togglePassword').addEventListener('click', function () {
       const passwordInput = document.getElementById('passwordInput');
-      passwordInput.type = this.checked ? 'text' : 'password';
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      this.textContent = isPassword ? '🙈' : '👁️';
     });
 
     async function signUp() {
@@ -552,7 +584,7 @@
     async function login() {
       const password = document.getElementById('passwordInput').value;
       if (!password) return alert('Password required.');
-      
+
       if (password === '1234') {
         // Admin login
         const adminSession = { user: { email: adminEmail }, isAdmin: true };
@@ -579,12 +611,12 @@
       const topic = document.getElementById('topicInput').value.trim();
       if (!file || !course) return alert('Select file and enter course name.');
 
-      
+
       const filePath = `${Date.now()}_${file.name}`;
       const { error: uploadError } = await supabase.storage.from(bucketName).upload(filePath, file);
       if (uploadError) return alert('Upload error: ' + uploadError.message);
       const { data: uploadedFile } = await supabase.storage.from(bucketName).getPublicUrl(filePath);
-      
+
       const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
       const publicUrl = urlData.publicUrl;
 
@@ -598,11 +630,84 @@
     }
 
     async function loadSlides() {
-      const { data: slides, error } = await supabase.from(tableName).select('*').order('created_at', { ascending: false });
-      if (error) return console.error('Slide load error:', error.message);
-      window.allSlides = slides;
-      renderSlides();
+      try {
+        // Show loading indicator
+        const container = document.getElementById('slidesContainer');
+        container.innerHTML = '<div class="text-center"><p>Loading slides...</p></div>';
+
+        // Check cache first
+        const cacheKey = 'slidesCache';
+        const cacheTime = localStorage.getItem('slidesCacheTime');
+        const now = Date.now();
+
+        // Use cache if it's less than 5 minutes old
+        if (cacheTime && (now - parseInt(cacheTime)) < 300000) {
+          const cachedSlides = localStorage.getItem(cacheKey);
+          if (cachedSlides) {
+            window.allSlides = JSON.parse(cachedSlides);
+            renderSlides();
+            return;
+          }
+        }
+
+        // Fetch from database
+        const { data: slides, error } = await supabase.from(tableName).select('*').order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Slide load error:', error.message);
+          container.innerHTML = '<div class="text-center"><p>Error loading slides. Please try again.</p></div>';
+          return;
+        }
+
+        // Cache the results
+        localStorage.setItem(cacheKey, JSON.stringify(slides));
+        localStorage.setItem('slidesCacheTime', now.toString());
+
+        window.allSlides = slides;
+        renderSlides();
+      } catch (error) {
+        console.error('Unexpected error loading slides:', error);
+        const container = document.getElementById('slidesContainer');
+        container.innerHTML = '<div class="text-center"><p>Failed to load slides. Check your connection.</p></div>';
+      }
     }
+
+    window.downloadAndOpenSlide = async function(url, filename) {
+      try {
+        // Check if file was already downloaded
+        const downloadKey = `downloaded_${filename}`;
+        const alreadyDownloaded = localStorage.getItem(downloadKey);
+
+        if (!alreadyDownloaded) {
+          // Download the file only if not previously downloaded
+          const response = await fetch(url);
+          const blob = await response.blob();
+
+          // Create a download link
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = downloadUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+
+          // Clean up the blob URL
+          window.URL.revokeObjectURL(downloadUrl);
+
+          // Mark as downloaded
+          localStorage.setItem(downloadKey, 'true');
+        }
+
+        // Always open in new tab for viewing
+        window.open(url, '_blank');
+
+      } catch (error) {
+        console.error('Error downloading file:', error);
+        // Fallback to just opening the file
+        window.open(url, '_blank');
+      }
+    };
 
     window.renderSlides = function renderSlides() {
       const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
@@ -624,18 +729,16 @@
 
       filtered.forEach(slide => {
         const item = document.createElement('div');
-        item.className = 'slide';
+        item.className = 'slide-item';
         item.innerHTML = `
-        <div>
-          <h3>${slide.course || 'Untitled'}</h3>
-        </div>
-        <div>
-          <p><strong>Course:</strong> ${slide.topic || 'Unknown'}</p>
-         </div>
-         <div>
-          <a href="${slide.url}" target="_blank" class="slide-btn">
-                <i>📄</i> View Slide
-              </a>
+          <div class="slide-info">
+            <h3>${slide.course || 'Untitled'}</h3>
+            <p><strong>Course:</strong> ${slide.topic || 'Unknown'}</p>
+          </div>
+          <div class="slide-actions">
+            <button class="slide-btn" onclick="downloadAndOpenSlide('${slide.url}', '${slide.name}')">
+              <i>📄</i> View Slide
+            </button>
           </div>
         `;
         container.appendChild(item);
@@ -659,10 +762,38 @@
       }
     }
 
+    // Database keep-alive function
+    async function keepDatabaseAlive() {
+      try {
+        await supabase.from(tableName).select('count').limit(1);
+      } catch (error) {
+        console.log('Keep-alive ping failed:', error.message);
+      }
+    }
+
+    // Refresh slides function
+    window.refreshSlides = async function() {
+      localStorage.removeItem('slidesCache');
+      localStorage.removeItem('slidesCacheTime');
+      await loadSlides();
+    };
+
+    // Keep database active with periodic pings every 4 minutes
+    setInterval(keepDatabaseAlive, 240000);
+
     // Check for saved session
     const savedSession = localStorage.getItem('userSession');
     const session = savedSession ? JSON.parse(savedSession) : null;
     updateUI(session);
-  </script>
+  
+</script>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-text">
+        © 2025 <a href="#" class="footer-brand">SlideVault</a> by MiKe. All Rights Reserved.
+      </p>
+    </div>
+  </footer>
 </body>
 </html>
