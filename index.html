@@ -287,314 +287,321 @@
     }
 
     .password-wrapper input {
-    padding-right: 3rem; /* Increase padding to fit the button comfortably */
-  }
+      padding-right: 3rem;
+      /* Increase padding to fit the button comfortably */
+    }
 
     .password-toggle {
-  position: absolute;
-  right: 0.5rem; /* Adjusted space from the right */
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1rem; /* Reduce font size if necessary */
-  color: var(--gray);
-  transition: var(--transition);
-  padding: 0.5rem; /* Ensure a better touch target */
-  z-index: 1; /* Keeps it on top */
-}
-    @media (max-width: 768px) {
-  .password-toggle {
-    font-size: 0.9rem; /* Smaller font size for mobile */
-  }
-
-    .password-toggle:hover {
-      color: var(--primary);
-    }
-
-    input[type="email"]:focus,
-    input[type="password"]:focus,
-    input[type="text"]:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
-      transform: scale(1.01);
-    }
-
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 1rem 0;
-    }
-
-    .btn {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      border: none;
-      border-radius: 25px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::after {
-      content: '';
       position: absolute;
+      right: 0.5rem;
+      /* Adjusted space from the right */
       top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.4s ease, height 0.4s ease;
-    }
-
-    .btn:hover::after {
-      width: 200px;
-      height: 200px;
-    }
-
-    .btn-primary {
-      background: linear-gradient(45deg, var(--primary), var(--accent));
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: linear-gradient(45deg, var(--primary-dark), var(--secondary));
-      transform: translateY(-3px);
-    }
-
-    .btn-secondary {
-      background: var(--glass-bg);
-      color: var(--primary);
-      border: 1px solid var(--glass-border);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-3px);
-    }
-
-    .btn-danger {
-      background: var(--danger);
-      color: white;
-    }
-
-    .btn-danger:hover {
-      opacity: 0.9;
-      transform: translateY(-3px);
-    }
-
-    .btn-group {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    #searchInput {
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-      display: block;
-      padding: 0.75rem 1.5rem;
-      border-radius: 50px;
-      border: 1px solid var(--light-gray);
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
       font-size: 1rem;
-      background: var(--glass-bg);
+      /* Reduce font size if necessary */
+      color: var(--gray);
       transition: var(--transition);
-      min-height: 44px;
-      /* Better touch target for mobile */
-    }
-
-    #searchInput:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
-      transform: scale(1.02);
-    }
-
-    body.dark-mode {
-      background: linear-gradient(135deg, #121212, #1e1e1e);
-      color: #e0e0e0;
-    }
-
-    body.dark-mode #authSection,
-    body.dark-mode #uploadSection,
-    body.dark-mode .slide-card {
-      background: rgba(30, 30, 30, 0.9);
-      border-color: #444;
-    }
-
-    body.dark-mode .slide-item {
-      background: #2d2d2d;
-    }
-
-    body.dark-mode .slide-info p {
-      color: #b0b0b0;
-    }
-
-    body.dark-mode .slide-info strong {
-      color: #ffffff;
-    }
-
-    body.dark-mode input,
-    body.dark-mode select,
-    body.dark-mode textarea {
-      background: #2d2d2d;
-      border-color: #555;
-      color: #e0e0e0;
-    }
-
-    body.dark-mode h1,
-    body.dark-mode h2,
-    body.dark-mode h3,
-    body.dark-mode h4,
-    body.dark-mode h5,
-    body.dark-mode h6 {
-      color: #ffffff;
-    }
-
-    body.dark-mode p {
-      color: #b0b0b0;
-    }
-
-    .dark-mode-toggle {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-      z-index: 100;
-      box-shadow: var(--card-shadow);
-    }
-
-    .dark-mode-toggle:hover {
-      transform: rotate(360deg);
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .logout-btn {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      background: var(--glass-bg);
-      color: var(--white);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      z-index: 100;
-      box-shadow: var(--card-shadow);
-      display: none;
-    }
-
-    .logout-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      /* Slightly darker on hover */
-      transform: translateY(-2px);
-    }
-
-    .logout-btn.show {
-      display: block;
-      /* Show when needed */
-    }
-
-    .hidden {
-      display: none;
+      padding: 0.5rem;
+      /* Ensure a better touch target */
+      z-index: 1;
+      /* Keeps it on top */
     }
 
     @media (max-width: 768px) {
-      .container {
-        padding: 1rem;
+      .password-toggle {
+        font-size: 0.9rem;
+        /* Smaller font size for mobile */
       }
 
-      h1 {
-        font-size: 2rem;
+      .password-toggle:hover {
+        color: var(--primary);
       }
 
-      #slidesContainer {
-        grid-template-columns: 1fr;
+      input[type="email"]:focus,
+      input[type="password"]:focus,
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+        transform: scale(1.01);
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s ease, height 0.4s ease;
+      }
+
+      .btn:hover::after {
+        width: 200px;
+        height: 200px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, var(--primary), var(--accent));
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(45deg, var(--primary-dark), var(--secondary));
+        transform: translateY(-3px);
+      }
+
+      .btn-secondary {
+        background: var(--glass-bg);
+        color: var(--primary);
+        border: 1px solid var(--glass-border);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        opacity: 0.9;
+        transform: translateY(-3px);
       }
 
       .btn-group {
-        flex-direction: column;
-      }
-
-      .slide-btn {
-        padding: 0.6rem 1rem;
-        font-size: 0.85rem;
-        min-width: 90px;
-      }
-
-      .slide-item {
-        flex-direction: column;
+        display: flex;
         gap: 1rem;
-        align-items: stretch;
-      }
-
-      .slide-actions {
-        margin-left: 0;
-        text-align: center;
+        margin-top: 1rem;
       }
 
       #searchInput {
-        font-size: 16px;
-        /* Prevents zoom on iOS */
-        padding: 0.875rem 1.25rem;
-        border-radius: 25px;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+        display: block;
+        padding: 0.75rem 1.5rem;
+        border-radius: 50px;
+        border: 1px solid var(--light-gray);
+        font-size: 1rem;
+        background: var(--glass-bg);
+        transition: var(--transition);
+        min-height: 44px;
+        /* Better touch target for mobile */
       }
 
-      .form-group {
-        flex-direction: column !important;
-        gap: 0.5rem !important;
+      #searchInput:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
+        transform: scale(1.02);
       }
 
-      .form-group button {
-        width: 100% !important;
-        margin: 0 !important;
+      body.dark-mode {
+        background: linear-gradient(135deg, #121212, #1e1e1e);
+        color: #e0e0e0;
       }
-    }
 
-    /* Footer Styles */
-    .footer {
-      background: var(--glass-bg);
-      border-top: 1px solid var(--glass-border);
-      padding: 1rem 0;
-      text-align: center;
-      color: var(--gray);
-      margin-top: 2rem;
-    }
+      body.dark-mode #authSection,
+      body.dark-mode #uploadSection,
+      body.dark-mode .slide-card {
+        background: rgba(30, 30, 30, 0.9);
+        border-color: #444;
+      }
 
-    .footer-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
+      body.dark-mode .slide-item {
+        background: #2d2d2d;
+      }
 
-    .footer-text {
-      font-size: 0.8rem;
-    }
+      body.dark-mode .slide-info p {
+        color: #b0b0b0;
+      }
 
-    .footer-brand {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-    }
+      body.dark-mode .slide-info strong {
+        color: #ffffff;
+      }
+
+      body.dark-mode input,
+      body.dark-mode select,
+      body.dark-mode textarea {
+        background: #2d2d2d;
+        border-color: #555;
+        color: #e0e0e0;
+      }
+
+      body.dark-mode h1,
+      body.dark-mode h2,
+      body.dark-mode h3,
+      body.dark-mode h4,
+      body.dark-mode h5,
+      body.dark-mode h6 {
+        color: #ffffff;
+      }
+
+      body.dark-mode p {
+        color: #b0b0b0;
+      }
+
+      .dark-mode-toggle {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: var(--transition);
+        z-index: 100;
+        box-shadow: var(--card-shadow);
+      }
+
+      .dark-mode-toggle:hover {
+        transform: rotate(360deg);
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .logout-btn {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: var(--glass-bg);
+        color: var(--white);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+        z-index: 100;
+        box-shadow: var(--card-shadow);
+        display: none;
+      }
+
+      .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        /* Slightly darker on hover */
+        transform: translateY(-2px);
+      }
+
+      .logout-btn.show {
+        display: block;
+        /* Show when needed */
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 1rem;
+        }
+
+        h1 {
+          font-size: 2rem;
+        }
+
+        #slidesContainer {
+          grid-template-columns: 1fr;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .slide-btn {
+          padding: 0.6rem 1rem;
+          font-size: 0.85rem;
+          min-width: 90px;
+        }
+
+        .slide-item {
+          flex-direction: column;
+          gap: 1rem;
+          align-items: stretch;
+        }
+
+        .slide-actions {
+          margin-left: 0;
+          text-align: center;
+        }
+
+        #searchInput {
+          font-size: 16px;
+          /* Prevents zoom on iOS */
+          padding: 0.875rem 1.25rem;
+          border-radius: 25px;
+        }
+
+        .form-group {
+          flex-direction: column !important;
+          gap: 0.5rem !important;
+        }
+
+        .form-group button {
+          width: 100% !important;
+          margin: 0 !important;
+        }
+      }
+
+      /* Footer Styles */
+      .footer {
+        background: var(--glass-bg);
+        border-top: 1px solid var(--glass-border);
+        padding: 1rem 0;
+        text-align: center;
+        color: var(--gray);
+        margin-top: 2rem;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .footer-text {
+        font-size: 0.8rem;
+      }
+
+      .footer-brand {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+      }
   </style>
 </head>
 
@@ -620,15 +627,19 @@
       <h2>Enter access password to continue</h2>
       <div class="form-group">
         <label for="passwordInput">Password</label>
-      <div class="password-wrapper">
-  <input type="password" id="passwordInput" placeholder="Enter access password">
-  <button type="button" class="password-toggle" id="togglePassword">Show</button>
-</div>
+        <div class="password-wrapper">
+          <input type="password" id="passwordInput" placeholder="Enter access password">
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="showPasswordCheckbox">
+          <label for="showPasswordCheckbox">Show Password</label>
+        </div>
       </div>
       <div class="btn-group">
         <button id="loginBtn" class="btn btn-primary">Access page</button>
       </div>
     </div>
+
     <div id="uploadSection" class="hidden">
       <div id="adminUpload">
         <h2>Upload New Slide</h2>
@@ -690,13 +701,11 @@
     document.getElementById('loginBtn').onclick = login;
     document.getElementById('logoutBtn').onclick = logout;
     document.getElementById('uploadBtn').onclick = uploadFile;
-    document.getElementById('togglePassword').addEventListener('click', function () {
-  const passwordInput = document.getElementById('passwordInput');
-  const isPassword = passwordInput.type === 'password';
-  passwordInput.type = isPassword ? 'text' : 'password';
-  this.textContent = isPassword ? 'Hide' : 'Show';
-});
-
+    const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+    showPasswordCheckbox.addEventListener('change', function () {
+      const passwordInput = document.getElementById('passwordInput');
+      passwordInput.type = this.checked ? 'text' : 'password';
+    });
     async function signUp() {
       alert('Please use the login function with your assigned password.');
     }
