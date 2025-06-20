@@ -287,20 +287,27 @@
     }
 
     .password-wrapper input {
-      width: 100%;
-      padding-right: 2.5rem;
-    }
+    padding-right: 3rem; /* Increase padding to fit the button comfortably */
+  }
 
     .password-toggle {
-      position: absolute;
-      right: 0.75rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.2rem;
-      color: var(--gray);
-      transition: var(--transition);
-    }
+  position: absolute;
+  right: 0.5rem; /* Adjusted space from the right */
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem; /* Reduce font size if necessary */
+  color: var(--gray);
+  transition: var(--transition);
+  padding: 0.5rem; /* Ensure a better touch target */
+  z-index: 1; /* Keeps it on top */
+}
+    @media (max-width: 768px) {
+  .password-toggle {
+    font-size: 0.9rem; /* Smaller font size for mobile */
+  }
 
     .password-toggle:hover {
       color: var(--primary);
@@ -613,10 +620,10 @@
       <h2>Enter access password to continue</h2>
       <div class="form-group">
         <label for="passwordInput">Password</label>
-        <div class="password-wrapper">
-          <input type="password" id="passwordInput" placeholder="Enter access password">
-          <button type="button" class="password-toggle" id="togglePassword">Show</button>
-        </div>
+      <div class="password-wrapper">
+  <input type="password" id="passwordInput" placeholder="Enter access password">
+  <button type="button" class="password-toggle" id="togglePassword">Show</button>
+</div>
       </div>
       <div class="btn-group">
         <button id="loginBtn" class="btn btn-primary">Access page</button>
@@ -684,11 +691,11 @@
     document.getElementById('logoutBtn').onclick = logout;
     document.getElementById('uploadBtn').onclick = uploadFile;
     document.getElementById('togglePassword').addEventListener('click', function () {
-      const passwordInput = document.getElementById('passwordInput');
-      const isPassword = passwordInput.type === 'password';
-      passwordInput.type = isPassword ? 'text' : 'password';
-      this.textContent = isPassword ? 'Hide' : 'Show';
-    });
+  const passwordInput = document.getElementById('passwordInput');
+  const isPassword = passwordInput.type === 'password';
+  passwordInput.type = isPassword ? 'text' : 'password';
+  this.textContent = isPassword ? 'Hide' : 'Show';
+});
 
     async function signUp() {
       alert('Please use the login function with your assigned password.');
