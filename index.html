@@ -24,20 +24,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #3b82f6;
-      --primary-dark: #2563eb;
-      --secondary: #60a5fa;
-      --accent: #93c5fd;
+      --primary: #00ffff;
+      --primary-dark: #00cccc;
+      --secondary: #ff00ff;
+      --accent: #ffff00;
       --light: #f8fafc;
-      --dark: #020617;
+      --dark: #000011;
       --gray: #94a3b8;
       --light-gray: #f1f5f9;
-      --success: #22c55e;
-      --warning: #fbbf24;
-      --danger: #f87171;
-      --card-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.4), 0 4px 10px -3px rgba(0, 0, 0, 0.3);
-      --glass-bg: rgba(15, 23, 42, 0.9);
-      --glass-border: rgba(59, 130, 246, 0.3);
+      --success: #00ff00;
+      --warning: #ffaa00;
+      --danger: #ff0066;
+      --neon-blue: #00ffff;
+      --neon-pink: #ff00ff;
+      --neon-green: #00ff00;
+      --neon-yellow: #ffff00;
+      --neon-purple: #9933ff;
+      --card-shadow: 0 0 8px rgba(0, 255, 255, 0.2), 0 0 16px rgba(255, 0, 255, 0.1);
+      --glass-bg: rgba(0, 0, 17, 0.9);
+      --glass-border: rgba(0, 255, 255, 0.5);
       --transition: all 0.3s ease-in-out;
     }
 
@@ -50,12 +55,29 @@
     body {
       font-family: 'Inter', sans-serif;
       line-height: 1.6;
-      background: linear-gradient(135deg, #020617, #0f172a, #1e293b);
-      color: #f1f5f9;
+      background: linear-gradient(135deg, #000011, #001122, #002244);
+      background-attachment: fixed;
+      color: #ffffff;
       min-height: 100vh;
       padding: 0;
       overflow-x: hidden;
       transition: var(--transition);
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 0, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
     }
 
     .container {
@@ -89,13 +111,13 @@
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
-      color: #f1f5f9;
+      color: var(--neon-blue);
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      text-shadow: 0 2px 4px rgba(59, 130, 246, 0.5);
+      text-shadow: 0 0 3px var(--neon-blue);
     }
 
     h1 span {
@@ -146,34 +168,64 @@
       max-width: 500px;
       margin: 0 auto 3rem;
       backdrop-filter: blur(10px);
-      background: linear-gradient(145deg, #0f172a, #1e293b);
-      border: 2px solid var(--primary);
+      background: linear-gradient(145deg, rgba(0, 0, 17, 0.8), rgba(0, 17, 34, 0.8));
+      border: 2px solid var(--neon-blue);
       padding: 2rem;
       border-radius: 15px;
-      box-shadow: var(--card-shadow);
+      box-shadow: 
+        0 0 8px rgba(0, 255, 255, 0.2),
+        0 0 16px rgba(0, 255, 255, 0.1),
+        inset 0 0 8px rgba(0, 255, 255, 0.05);
       transition: var(--transition);
+      position: relative;
+      overflow: hidden;
     }
+
+    
 
     #slidesContainer {
       margin-top: 2rem;
     }
 
     .slide-item {
-      background: linear-gradient(145deg, #1e293b, #334155);
+      background: linear-gradient(145deg, rgba(0, 17, 34, 0.8), rgba(17, 34, 68, 0.8));
       margin-bottom: 1rem;
       padding: 1.5rem;
       border-radius: 8px;
-      box-shadow: var(--card-shadow);
+      box-shadow: 
+        0 0 6px rgba(0, 255, 255, 0.15),
+        0 0 12px rgba(255, 0, 255, 0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
       transition: var(--transition);
-      border-left: 4px solid var(--primary);
+      border-left: 4px solid var(--neon-blue);
+      border: 1px solid var(--neon-blue);
+      position: relative;
+    }
+
+    .slide-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
     }
 
     .slide-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 15px rgba(30, 58, 138, 0.15);
+      transform: translateY(-5px);
+      box-shadow: 
+        0 0 10px rgba(0, 255, 255, 0.3),
+        0 0 20px rgba(255, 0, 255, 0.2);
+      border-color: var(--neon-pink);
+    }
+
+    .slide-item:hover::before {
+      transform: translateX(100%);
     }
 
     .slide-info {
@@ -210,9 +262,9 @@
       align-items: center;
       justify-content: center;
       padding: 0.7rem 1.2rem;
-      background: var(--primary);
-      color: white;
-      border: none;
+      background: transparent;
+      color: var(--neon-blue);
+      border: 2px solid var(--neon-blue);
       border-radius: 6px;
       font-weight: 500;
       text-decoration: none;
@@ -221,11 +273,36 @@
       font-family: inherit;
       font-size: 0.9rem;
       min-width: 80px;
+      box-shadow: 
+        0 0 4px rgba(0, 255, 255, 0.15),
+        inset 0 0 2px rgba(0, 255, 255, 0.05);
+      text-shadow: 0 0 2px var(--neon-blue);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+      transition: left 0.5s;
     }
 
     .slide-btn:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
+      background: rgba(0, 255, 255, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 
+        0 0 8px rgba(0, 255, 255, 0.3),
+        0 0 16px rgba(0, 255, 255, 0.2);
+      color: white;
+    }
+
+    .slide-btn:hover::before {
+      left: 100%;
     }
 
     .slide-btn.download {
@@ -273,12 +350,15 @@
     input[type="file"] {
       width: 100%;
       padding: 0.75rem 1rem;
-      border: 2px solid var(--primary);
+      border: 2px solid var(--neon-blue);
       border-radius: 8px;
       font-size: 1rem;
-      background: #1e293b;
-      color: #f1f5f9;
+      background: rgba(0, 17, 34, 0.8);
+      color: var(--neon-blue);
       transition: var(--transition);
+      box-shadow: 
+        0 0 4px rgba(0, 255, 255, 0.1),
+        inset 0 0 2px rgba(0, 255, 255, 0.05);
     }
 
     .password-wrapper {
@@ -314,9 +394,13 @@
     input[type="password"]:focus,
     input[type="text"]:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.3);
-      transform: scale(1.01);
+      border-color: var(--neon-pink);
+      box-shadow: 
+        0 0 8px rgba(0, 255, 255, 0.25),
+        0 0 16px rgba(255, 0, 255, 0.15),
+        inset 0 0 4px rgba(0, 255, 255, 0.1);
+      transform: scale(1.02);
+      color: white;
     }
 
     .checkbox-group {
@@ -364,13 +448,23 @@
     }
 
     .btn-primary {
-      background: linear-gradient(45deg, var(--primary), var(--secondary));
-      color: white;
+      background: transparent;
+      color: var(--neon-blue);
+      border: 2px solid var(--neon-blue);
+      box-shadow: 
+        0 0 6px rgba(0, 255, 255, 0.2),
+        inset 0 0 4px rgba(0, 255, 255, 0.05);
+      text-shadow: 0 0 2px var(--neon-blue);
     }
 
     .btn-primary:hover {
-      background: linear-gradient(45deg, var(--primary-dark), var(--primary));
+      background: rgba(0, 255, 255, 0.1);
       transform: translateY(-3px);
+      box-shadow: 
+        0 0 10px rgba(0, 255, 255, 0.35),
+        0 0 20px rgba(0, 255, 255, 0.25);
+      color: white;
+      border-color: var(--neon-pink);
     }
 
     .btn-secondary {
@@ -408,18 +502,24 @@
       display: block;
       padding: 0.75rem 1.5rem;
       border-radius: 50px;
-      border: 2px solid var(--primary);
+      border: 2px solid var(--neon-blue);
       font-size: 1rem;
-      background: #1e293b;
-      color: #f1f5f9;
+      background: rgba(0, 17, 34, 0.8);
+      color: var(--neon-blue);
       transition: var(--transition);
       min-height: 44px;
+      box-shadow: 
+        0 0 6px rgba(0, 255, 255, 0.15),
+        inset 0 0 2px rgba(0, 255, 255, 0.05);
     }
 
     #searchInput:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.3);
+      border-color: var(--neon-pink);
+      box-shadow: 
+        0 0 10px rgba(0, 255, 255, 0.3),
+        0 0 20px rgba(255, 0, 255, 0.2);
       transform: scale(1.02);
+      color: white;
     }
 
     .logout-btn {
@@ -506,12 +606,13 @@
     }
 
     .footer {
-      background: linear-gradient(145deg, #0f172a, #1e293b);
-      border-top: 2px solid var(--primary);
+      background: linear-gradient(145deg, rgba(0, 0, 17, 0.9), rgba(0, 17, 34, 0.9));
+      border-top: 2px solid var(--neon-blue);
       padding: 1rem 0;
       text-align: center;
-      color: #f1f5f9;
+      color: var(--neon-blue);
       margin-top: 2rem;
+      box-shadow: 0 -2px 8px rgba(0, 255, 255, 0.15);
     }
 
     .footer-content {
@@ -716,7 +817,7 @@
     window.viewAndDownloadSlide = async function (url, filename) {
       // First open/view the slide
       await openSlide(url);
-      
+
       // Then download it
       await downloadSlide(url, filename);
     };
