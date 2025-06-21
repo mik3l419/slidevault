@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -50,8 +51,8 @@
     body {
       font-family: 'Inter', sans-serif;
       line-height: 1.6;
-      background: linear-gradient(135deg, #e0e7ff, #f5f7fa);
-      color: var(--dark);
+      background: linear-gradient(135deg, #121212, #1e1e1e);
+      color: #e0e0e0;
       min-height: 100vh;
       padding: 0;
       overflow-x: hidden;
@@ -89,7 +90,7 @@
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
-      color: var(--primary);
+      color: #ffffff;
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
@@ -141,12 +142,8 @@
     h2 {
       font-size: 1.75rem;
       font-weight: 600;
-      color: var(--dark);
+      color: #ffffff;
       margin-bottom: 1rem;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
     }
 
     #authSection,
@@ -154,8 +151,8 @@
       max-width: 500px;
       margin: 0 auto 3rem;
       backdrop-filter: blur(10px);
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
+      background: rgba(30, 30, 30, 0.9);
+      border: 1px solid #444;
       padding: 2rem;
       border-radius: 15px;
       box-shadow: var(--card-shadow);
@@ -170,7 +167,7 @@
     }
 
     .slide-item {
-      background: white;
+      background: #2d2d2d;
       margin-bottom: 1rem;
       padding: 1.5rem;
       border-radius: 8px;
@@ -192,18 +189,18 @@
 
     .slide-info h3 {
       margin: 0 0 0.5rem 0;
-      color: var(--primary);
+      color: #ffffff;
       font-size: 1.1rem;
     }
 
     .slide-info p {
       margin: 0.25rem 0;
-      color: var(--gray);
+      color: #b0b0b0;
       font-size: 0.9rem;
     }
 
     .slide-info strong {
-      color: var(--dark);
+      color: #ffffff;
       font-weight: 600;
     }
 
@@ -251,7 +248,7 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
-      color: var(--dark);
+      color: #ffffff;
       animation: slideIn 0.5s ease-out;
     }
 
@@ -273,10 +270,11 @@
     input[type="file"] {
       width: 100%;
       padding: 0.75rem 1rem;
-      border: 1px solid var(--light-gray);
+      border: 1px solid #555;
       border-radius: 8px;
       font-size: 1rem;
-      background: rgba(255, 255, 255, 0.9);
+      background: #2d2d2d;
+      color: #e0e0e0;
       transition: var(--transition);
     }
 
@@ -411,9 +409,10 @@
         display: block;
         padding: 0.75rem 1.5rem;
         border-radius: 50px;
-        border: 1px solid var(--light-gray);
+        border: 1px solid #555;
         font-size: 1rem;
-        background: var(--glass-bg);
+        background: #2d2d2d;
+        color: #e0e0e0;
         transition: var(--transition);
         min-height: 44px;
         /* Better touch target for mobile */
@@ -470,6 +469,35 @@
         color: #b0b0b0;
       }
 
+      body.dark-mode .logout-btn {
+        background: rgba(50, 50, 50, 0.9);
+        color: #e0e0e0;
+        border-color: #555;
+      }
+
+      body.dark-mode .dark-mode-toggle {
+        background: rgba(50, 50, 50, 0.9);
+        color: #e0e0e0;
+        border-color: #555;
+      }
+
+      body.dark-mode h4,
+      body.dark-mode h5 {
+        color: #ffffff !important;
+      }
+
+      body.dark-mode .footer-text {
+        color: #b0b0b0;
+      }
+
+      body.dark-mode .footer-brand {
+        color: var(--primary);
+      }
+
+      body.dark-mode .no-slides {
+        color: #b0b0b0;
+      }
+
       .dark-mode-toggle {
         position: fixed;
         top: 1rem;
@@ -498,7 +526,7 @@
         top: 1rem;
         left: 1rem;
         background: var(--glass-bg);
-        color: var(--white);
+        color: var(--dark);
         border: 1px solid var(--glass-border);
         border-radius: 8px;
         padding: 0.5rem 1rem;
@@ -579,11 +607,11 @@
 
       /* Footer Styles */
       .footer {
-        background: var(--glass-bg);
-        border-top: 1px solid var(--glass-border);
+        background: rgba(30, 30, 30, 0.9);
+        border-top: 1px solid #444;
         padding: 1rem 0;
         text-align: center;
-        color: var(--gray);
+        color: #b0b0b0;
         margin-top: 2rem;
       }
 
@@ -674,10 +702,15 @@
     const darkModeToggle = document.getElementById('darkModeToggle');
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
 
-    // Check for saved user preference or use system preference
-    const currentTheme = localStorage.getItem('theme') ||
-      (prefersDarkScheme.matches ? 'dark' : 'light');
-    if (currentTheme === 'dark') document.body.classList.add('dark-mode');
+    // Set dark mode by default
+    document.body.classList.add('dark-mode');
+    
+    // Check for saved user preference
+    const currentTheme = localStorage.getItem('theme') || 'dark';
+    
+    if (currentTheme === 'light') {
+      document.body.classList.remove('dark-mode');
+    }
 
     darkModeToggle.addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
@@ -888,6 +921,10 @@
 
     async function updateUI(session) {
       const isLoggedIn = !!session;
+      
+      // Always clear slides container first
+      document.getElementById('slidesContainer').innerHTML = '';
+      
       document.getElementById('authSection').classList.toggle('hidden', isLoggedIn);
       document.getElementById('uploadSection').classList.toggle('hidden', !isLoggedIn);
       document.getElementById('logoutBtn').classList.toggle('show', isLoggedIn);
@@ -905,7 +942,10 @@
           supabase.removeChannel(realtimeChannel);
           realtimeChannel = null;
         }
-        document.getElementById('slidesContainer').innerHTML = '';
+        // Clear any cached data
+        localStorage.removeItem('slidesCache');
+        localStorage.removeItem('slidesCacheTime');
+        window.allSlides = [];
       }
     }
 
@@ -995,33 +1035,30 @@
     // Keep database active with periodic pings every 4 minutes
     setInterval(keepDatabaseAlive, 240000);
 
-    // Register service worker for PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(registration => {
-            console.log('SW registered: ', registration);
-          })
-          .catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
-          });
-      });
-    }
-
-    // Show install prompt
-    let deferredPrompt;
-    let installBanner;
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      console.log('beforeinstallprompt event fired');
-      e.preventDefault();
-      deferredPrompt = e;
+    // Service worker removed to prevent errors
 
     // Check for saved session
     const savedSession = localStorage.getItem('userSession');
-    const session = savedSession ? JSON.parse(savedSession) : null;
+    let session = null;
+    
+    // Validate saved session before using it
+    if (savedSession) {
+      try {
+        const parsedSession = JSON.parse(savedSession);
+        // Only accept valid sessions with proper structure
+        if (parsedSession && parsedSession.user && (parsedSession.isAdmin !== undefined)) {
+          session = parsedSession;
+        } else {
+          // Clear invalid session data
+          localStorage.removeItem('userSession');
+        }
+      } catch (e) {
+        // Clear corrupted session data
+        localStorage.removeItem('userSession');
+      }
+    }
+    
     updateUI(session);
-
   </script>
 
   <footer class="footer">
