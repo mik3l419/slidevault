@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,7 +14,7 @@
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#4361ee">
+  <meta name="theme-color" content="#1e3a8a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="SlideVault">
@@ -25,20 +24,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #4361ee;
-      --primary-dark: #3a56d4;
-      --secondary: #3f37c9;
-      --accent: #4895ef;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-      --light-gray: #e9ecef;
-      --success: #4cc9f0;
-      --warning: #f8961e;
-      --danger: #f72585;
-      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      --glass-bg: rgba(255, 255, 255, 0.1);
-      --glass-border: rgba(255, 255, 255, 0.2);
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #60a5fa;
+      --accent: #93c5fd;
+      --light: #f8fafc;
+      --dark: #020617;
+      --gray: #94a3b8;
+      --light-gray: #f1f5f9;
+      --success: #22c55e;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --card-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.4), 0 4px 10px -3px rgba(0, 0, 0, 0.3);
+      --glass-bg: rgba(15, 23, 42, 0.9);
+      --glass-border: rgba(59, 130, 246, 0.3);
       --transition: all 0.3s ease-in-out;
     }
 
@@ -51,8 +50,8 @@
     body {
       font-family: 'Inter', sans-serif;
       line-height: 1.6;
-      background: linear-gradient(135deg, #121212, #1e1e1e);
-      color: #e0e0e0;
+      background: linear-gradient(135deg, #020617, #0f172a, #1e293b);
+      color: #f1f5f9;
       min-height: 100vh;
       padding: 0;
       overflow-x: hidden;
@@ -71,7 +70,7 @@
       text-align: center;
       margin-bottom: 2rem;
       padding-bottom: 1rem;
-      border-bottom: 1px solid var(--light-gray);
+      border-bottom: 2px solid var(--primary);
       animation: fadeIn 1s ease-in;
     }
 
@@ -90,13 +89,13 @@
     h1 {
       font-size: 2.5rem;
       font-weight: 700;
-      color: #ffffff;
+      color: #f1f5f9;
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      text-shadow: 0 2px 4px rgba(67, 97, 238, 0.3);
+      text-shadow: 0 2px 4px rgba(59, 130, 246, 0.5);
     }
 
     h1 span {
@@ -115,35 +114,31 @@
       }
     }
 
-    @keyframes slideInRight {
-      from {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes slideOutRight {
-      from {
-        transform: translateX(0);
-        opacity: 1;
-      }
-
-      to {
-        transform: translateX(100%);
-        opacity: 0;
-      }
-    }
-
     h2 {
       font-size: 1.75rem;
       font-weight: 600;
-      color: #ffffff;
+      color: #f1f5f9;
       margin-bottom: 1rem;
+    }
+
+    h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.5rem;
+    }
+
+    h5 {
+      font-size: 1rem;
+      font-weight: 500;
+      color: #f1f5f9;
+      margin-bottom: 0.5rem;
+      line-height: 1.7;
+    }
+
+    p {
+      color: #f1f5f9;
+      font-weight: 500;
     }
 
     #authSection,
@@ -151,23 +146,20 @@
       max-width: 500px;
       margin: 0 auto 3rem;
       backdrop-filter: blur(10px);
-      background: rgba(30, 30, 30, 0.9);
-      border: 1px solid #444;
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border: 2px solid var(--primary);
       padding: 2rem;
       border-radius: 15px;
       box-shadow: var(--card-shadow);
       transition: var(--transition);
-      transform-style: preserve-3d;
     }
-
-
 
     #slidesContainer {
       margin-top: 2rem;
     }
 
     .slide-item {
-      background: #2d2d2d;
+      background: linear-gradient(145deg, #1e293b, #334155);
       margin-bottom: 1rem;
       padding: 1.5rem;
       border-radius: 8px;
@@ -176,11 +168,12 @@
       justify-content: space-between;
       align-items: center;
       transition: var(--transition);
+      border-left: 4px solid var(--primary);
     }
 
     .slide-item:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 15px rgba(30, 58, 138, 0.15);
     }
 
     .slide-info {
@@ -189,24 +182,27 @@
 
     .slide-info h3 {
       margin: 0 0 0.5rem 0;
-      color: #ffffff;
+      color: #f1f5f9;
       font-size: 1.1rem;
+      font-weight: 600;
     }
 
     .slide-info p {
       margin: 0.25rem 0;
-      color: #b0b0b0;
+      color: #e2e8f0;
       font-size: 0.9rem;
     }
 
     .slide-info strong {
-      color: #ffffff;
+      color: var(--accent);
       font-weight: 600;
     }
 
     .slide-actions {
       margin-left: 1rem;
       flex-shrink: 0;
+      display: flex;
+      gap: 0.5rem;
     }
 
     .slide-btn {
@@ -224,12 +220,20 @@
       cursor: pointer;
       font-family: inherit;
       font-size: 0.9rem;
-      min-width: 100px;
+      min-width: 80px;
     }
 
     .slide-btn:hover {
       background: var(--primary-dark);
       transform: translateY(-2px);
+    }
+
+    .slide-btn.download {
+      background: var(--success);
+    }
+
+    .slide-btn.download:hover {
+      background: #059669;
     }
 
     .slide-btn i {
@@ -243,12 +247,11 @@
       color: var(--gray);
     }
 
-    /* Rest of your existing styles... */
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: #ffffff;
+      font-weight: 600;
+      color: #f1f5f9;
       animation: slideIn 0.5s ease-out;
     }
 
@@ -270,11 +273,11 @@
     input[type="file"] {
       width: 100%;
       padding: 0.75rem 1rem;
-      border: 1px solid #555;
+      border: 2px solid var(--primary);
       border-radius: 8px;
       font-size: 1rem;
-      background: #2d2d2d;
-      color: #e0e0e0;
+      background: #1e293b;
+      color: #f1f5f9;
       transition: var(--transition);
     }
 
@@ -286,355 +289,251 @@
 
     .password-wrapper input {
       padding-right: 3rem;
-      /* Increase padding to fit the button comfortably */
     }
 
     .password-toggle {
       position: absolute;
       right: 0.5rem;
-      /* Adjusted space from the right */
       top: 50%;
       transform: translateY(-50%);
       background: none;
       border: none;
       cursor: pointer;
       font-size: 1rem;
-      /* Reduce font size if necessary */
       color: var(--gray);
       transition: var(--transition);
       padding: 0.5rem;
-      /* Ensure a better touch target */
       z-index: 1;
-      /* Keeps it on top */
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.3);
+      transform: scale(1.01);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .checkbox-group label {
+      margin-bottom: 0;
+      font-weight: 500;
+      color: #f1f5f9;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+
+    .btn:hover::after {
+      width: 200px;
+      height: 200px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(45deg, var(--primary-dark), var(--primary));
+      transform: translateY(-3px);
+    }
+
+    .btn-secondary {
+      background: var(--glass-bg);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      opacity: 0.9;
+      transform: translateY(-3px);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    #searchInput {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      display: block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      border: 2px solid var(--primary);
+      font-size: 1rem;
+      background: #1e293b;
+      color: #f1f5f9;
+      transition: var(--transition);
+      min-height: 44px;
+    }
+
+    #searchInput:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.3);
+      transform: scale(1.02);
+    }
+
+    .logout-btn {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      background: var(--glass-bg);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      z-index: 100;
+      box-shadow: var(--card-shadow);
+      display: none;
+    }
+
+    .logout-btn:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .logout-btn.show {
+      display: block;
+    }
+
+    .hidden {
+      display: none;
     }
 
     @media (max-width: 768px) {
-      .password-toggle {
-        font-size: 0.9rem;
-        /* Smaller font size for mobile */
+      .container {
+        padding: 1rem;
       }
 
-      .password-toggle:hover {
-        color: var(--primary);
+      h1 {
+        font-size: 2rem;
       }
 
-      input[type="email"]:focus,
-      input[type="password"]:focus,
-      input[type="text"]:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
-        transform: scale(1.01);
-      }
-
-      .checkbox-group {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin: 1rem 0;
-      }
-
-      .btn {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 25px;
-        font-size: 1rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: var(--transition);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .btn::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition: width 0.4s ease, height 0.4s ease;
-      }
-
-      .btn:hover::after {
-        width: 200px;
-        height: 200px;
-      }
-
-      .btn-primary {
-        background: linear-gradient(45deg, var(--primary), var(--accent));
-        color: white;
-      }
-
-      .btn-primary:hover {
-        background: linear-gradient(45deg, var(--primary-dark), var(--secondary));
-        transform: translateY(-3px);
-      }
-
-      .btn-secondary {
-        background: var(--glass-bg);
-        color: var(--primary);
-        border: 1px solid var(--glass-border);
-      }
-
-      .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: translateY(-3px);
-      }
-
-      .btn-danger {
-        background: var(--danger);
-        color: white;
-      }
-
-      .btn-danger:hover {
-        opacity: 0.9;
-        transform: translateY(-3px);
+      #slidesContainer {
+        grid-template-columns: 1fr;
       }
 
       .btn-group {
-        display: flex;
+        flex-direction: column;
+      }
+
+      .slide-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        min-width: 70px;
+      }
+
+      .slide-item {
+        flex-direction: column;
         gap: 1rem;
-        margin-top: 1rem;
+        align-items: stretch;
+      }
+
+      .slide-actions {
+        margin-left: 0;
+        text-align: center;
+        justify-content: center;
       }
 
       #searchInput {
-        width: 100%;
-        max-width: 500px;
-        margin: 0 auto;
-        display: block;
-        padding: 0.75rem 1.5rem;
-        border-radius: 50px;
-        border: 1px solid #555;
-        font-size: 1rem;
-        background: #2d2d2d;
-        color: #e0e0e0;
-        transition: var(--transition);
-        min-height: 44px;
-        /* Better touch target for mobile */
+        font-size: 16px;
+        padding: 0.875rem 1.25rem;
+        border-radius: 25px;
       }
 
-      #searchInput:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.3);
-        transform: scale(1.02);
+      .form-group {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
       }
 
-      body.dark-mode {
-        background: linear-gradient(135deg, #121212, #1e1e1e);
-        color: #e0e0e0;
+      .form-group button {
+        width: 100% !important;
+        margin: 0 !important;
       }
+    }
 
-      body.dark-mode #authSection,
-      body.dark-mode #uploadSection,
-      body.dark-mode .slide-card {
-        background: rgba(30, 30, 30, 0.9);
-        border-color: #444;
-      }
+    .footer {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-top: 2px solid var(--primary);
+      padding: 1rem 0;
+      text-align: center;
+      color: #f1f5f9;
+      margin-top: 2rem;
+    }
 
-      body.dark-mode .slide-item {
-        background: #2d2d2d;
-      }
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
 
-      body.dark-mode .slide-info p {
-        color: #b0b0b0;
-      }
+    .footer-text {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
 
-      body.dark-mode .slide-info strong {
-        color: #ffffff;
-      }
-
-      body.dark-mode input,
-      body.dark-mode select,
-      body.dark-mode textarea {
-        background: #2d2d2d;
-        border-color: #555;
-        color: #e0e0e0;
-      }
-
-      body.dark-mode h1,
-      body.dark-mode h2,
-      body.dark-mode h3,
-      body.dark-mode h4,
-      body.dark-mode h5,
-      body.dark-mode h6 {
-        color: #ffffff;
-      }
-
-      body.dark-mode p {
-        color: #b0b0b0;
-      }
-
-      body.dark-mode .logout-btn {
-        background: rgba(50, 50, 50, 0.9);
-        color: #e0e0e0;
-        border-color: #555;
-      }
-
-      body.dark-mode .dark-mode-toggle {
-        background: rgba(50, 50, 50, 0.9);
-        color: #e0e0e0;
-        border-color: #555;
-      }
-
-      body.dark-mode h4,
-      body.dark-mode h5 {
-        color: #ffffff !important;
-      }
-
-      body.dark-mode .footer-text {
-        color: #b0b0b0;
-      }
-
-      body.dark-mode .footer-brand {
-        color: var(--primary);
-      }
-
-      body.dark-mode .no-slides {
-        color: #b0b0b0;
-      }
-
-      .dark-mode-toggle {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: var(--transition);
-        z-index: 100;
-        box-shadow: var(--card-shadow);
-      }
-
-      .dark-mode-toggle:hover {
-        transform: rotate(360deg);
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      .logout-btn {
-        position: absolute;
-        top: 1rem;
-        left: 1rem;
-        background: var(--glass-bg);
-        color: var(--dark);
-        border: 1px solid var(--glass-border);
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: var(--transition);
-        z-index: 100;
-        box-shadow: var(--card-shadow);
-        display: none;
-      }
-
-      .logout-btn:hover {
-        background: rgba(255, 255, 255, 0.3);
-        /* Slightly darker on hover */
-        transform: translateY(-2px);
-      }
-
-      .logout-btn.show {
-        display: block;
-        /* Show when needed */
-      }
-
-      .hidden {
-        display: none;
-      }
-
-      @media (max-width: 768px) {
-        .container {
-          padding: 1rem;
-        }
-
-        h1 {
-          font-size: 2rem;
-        }
-
-        #slidesContainer {
-          grid-template-columns: 1fr;
-        }
-
-        .btn-group {
-          flex-direction: column;
-        }
-
-        .slide-btn {
-          padding: 0.6rem 1rem;
-          font-size: 0.85rem;
-          min-width: 90px;
-        }
-
-        .slide-item {
-          flex-direction: column;
-          gap: 1rem;
-          align-items: stretch;
-        }
-
-        .slide-actions {
-          margin-left: 0;
-          text-align: center;
-        }
-
-        #searchInput {
-          font-size: 16px;
-          /* Prevents zoom on iOS */
-          padding: 0.875rem 1.25rem;
-          border-radius: 25px;
-        }
-
-        .form-group {
-          flex-direction: column !important;
-          gap: 0.5rem !important;
-        }
-
-        .form-group button {
-          width: 100% !important;
-          margin: 0 !important;
-        }
-      }
-
-      /* Footer Styles */
-      .footer {
-        background: rgba(30, 30, 30, 0.9);
-        border-top: 1px solid #444;
-        padding: 1rem 0;
-        text-align: center;
-        color: #b0b0b0;
-        margin-top: 2rem;
-      }
-
-      .footer-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem;
-      }
-
-      .footer-text {
-        font-size: 0.8rem;
-      }
-
-      .footer-brand {
-        color: var(--primary);
-        text-decoration: none;
-        font-weight: 600;
-      }
+    .footer-brand {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
   </style>
 </head>
 
 <body>
-  <button class="dark-mode-toggle" id="darkModeToggle"> </button>
   <button class="logout-btn" id="logoutBtn">Logout</button>
 
   <div class="container">
@@ -698,26 +597,6 @@
   </div>
 
   <script type="module">
-    // Dark mode toggle functionality
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-
-    // Set dark mode by default
-    document.body.classList.add('dark-mode');
-    
-    // Check for saved user preference
-    const currentTheme = localStorage.getItem('theme') || 'dark';
-    
-    if (currentTheme === 'light') {
-      document.body.classList.remove('dark-mode');
-    }
-
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-      localStorage.setItem('theme', theme);
-    });
-
     // Your existing Supabase and app logic 
     import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -730,7 +609,6 @@
     const tableName = 'CourseTable';
 
     // Auth handlers
-
     document.getElementById('loginBtn').onclick = login;
     document.getElementById('logoutBtn').onclick = logout;
     document.getElementById('uploadBtn').onclick = uploadFile;
@@ -739,6 +617,7 @@
       const passwordInput = document.getElementById('passwordInput');
       passwordInput.type = this.checked ? 'text' : 'password';
     });
+
     async function signUp() {
       alert('Please use the login function with your assigned password.');
     }
@@ -772,7 +651,6 @@
       const course = document.getElementById('courseInput').value.trim();
       const topic = document.getElementById('topicInput').value.trim();
       if (!file || !course) return alert('Select file and enter course name.');
-
 
       const filePath = `${Date.now()}_${file.name}`;
       const {error: uploadError} = await supabase.storage.from(bucketName).upload(filePath, file);
@@ -834,14 +712,62 @@
       }
     }
 
-    window.downloadAndOpenSlide = async function (url, filename) {
-      try {
-        // First, always open the slide for viewing
-        const newWindow = window.open(url, '_blank');
+    // Combined view and download function
+    window.viewAndDownloadSlide = async function (url, filename) {
+      // First open/view the slide
+      await openSlide(url);
+      
+      // Then download it
+      await downloadSlide(url, filename);
+    };
 
-        // If opening failed, try alternative method
+    // Enhanced download function for mobile apps
+    window.downloadSlide = async function (url, filename) {
+      try {
+        // Create a hidden anchor element for download
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = filename;
+        downloadLink.style.display = 'none';
+        downloadLink.target = '_blank';
+        downloadLink.rel = 'noopener noreferrer';
+
+        // Add to document and trigger download
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        // Show success message
+        alert('Download started! Check your downloads folder.');
+
+      } catch (error) {
+        console.error('Download error:', error);
+
+        // Fallback: try to open in new window for mobile apps
+        try {
+          const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+          if (!newWindow) {
+            // If popup blocked, create temporary link
+            const tempLink = document.createElement('a');
+            tempLink.href = url;
+            tempLink.target = '_blank';
+            tempLink.rel = 'noopener noreferrer';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+          }
+        } catch (fallbackError) {
+          console.error('Fallback download failed:', fallbackError);
+          alert('Download failed. Please try again or check your internet connection.');
+        }
+      }
+    };
+
+    window.openSlide = async function (url) {
+      try {
+        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
         if (!newWindow) {
-          // Create a temporary link and click it
+          // If popup blocked, create temporary link
           const tempLink = document.createElement('a');
           tempLink.href = url;
           tempLink.target = '_blank';
@@ -850,33 +776,6 @@
           tempLink.click();
           document.body.removeChild(tempLink);
         }
-
-        // Then handle download in background
-        const downloadKey = `downloaded_${filename}`;
-        const alreadyDownloaded = localStorage.getItem(downloadKey);
-
-        if (!alreadyDownloaded) {
-          try {
-            const response = await fetch(url);
-            const blob = await response.blob();
-
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const downloadLink = document.createElement('a');
-            downloadLink.href = downloadUrl;
-            downloadLink.download = filename;
-            downloadLink.style.display = 'none';
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
-
-            window.URL.revokeObjectURL(downloadUrl);
-            localStorage.setItem(downloadKey, 'true');
-          } catch (downloadError) {
-            console.log('Background download failed:', downloadError);
-            // Download failure is not critical since we already opened the file
-          }
-        }
-
       } catch (error) {
         console.error('Error opening slide:', error);
         alert('Unable to open slide. Please check your internet connection.');
@@ -910,8 +809,8 @@
             <p><strong>Course:</strong> ${slide.topic || 'Unknown'}</p>
           </div>
           <div class="slide-actions">
-            <button class="slide-btn" onclick="downloadAndOpenSlide('${slide.url}', '${slide.name}')">
-              <i>📄</i> Open
+            <button class="slide-btn" onclick="viewAndDownloadSlide('${slide.url}', '${slide.name}')">
+              <i>📑</i> View Slide
             </button>
           </div>
         `;
@@ -921,10 +820,10 @@
 
     async function updateUI(session) {
       const isLoggedIn = !!session;
-      
+
       // Always clear slides container first
       document.getElementById('slidesContainer').innerHTML = '';
-      
+
       document.getElementById('authSection').classList.toggle('hidden', isLoggedIn);
       document.getElementById('uploadSection').classList.toggle('hidden', !isLoggedIn);
       document.getElementById('logoutBtn').classList.toggle('show', isLoggedIn);
@@ -957,8 +856,7 @@
         supabase.removeChannel(realtimeChannel);
       }
 
-      realtimeChannel = supabase
-        .channel('slides-changes')
+      realtimeChannel = supabase        .channel('slides-changes')
         .on('postgres_changes',
           {
             event: '*',
@@ -1035,12 +933,10 @@
     // Keep database active with periodic pings every 4 minutes
     setInterval(keepDatabaseAlive, 240000);
 
-    // Service worker removed to prevent errors
-
     // Check for saved session
     const savedSession = localStorage.getItem('userSession');
     let session = null;
-    
+
     // Validate saved session before using it
     if (savedSession) {
       try {
@@ -1057,7 +953,7 @@
         localStorage.removeItem('userSession');
       }
     }
-    
+
     updateUI(session);
   </script>
 
