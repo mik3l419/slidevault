@@ -792,19 +792,15 @@
     // Create visit counter table if it doesn't exist
     async function initializeVisitCounter() {
       try {
-        // Try to create the table (will fail silently if it already exists)
-        const { error } = await supabase.rpc('create_site_visits_table');
-        if (error && !error.message.includes('already exists')) {
-          console.log('Note: Could not create site_visits table automatically');
-        }
-        
         visitCounter = new window.VisitCounter(supabase);
         window.visitCounter = visitCounter;
         
-        // Wait a moment for initialization
+        // Show counter immediately for all users
         setTimeout(async () => {
-          await visitCounter.createVisitCounterElement();
-        }, 1000);
+          if (visitCounter) {
+            await visitCounter.createVisitCounterElement();
+          }
+        }, 500);
         
       } catch (error) {
         console.log('Visit counter initialization:', error.message);
