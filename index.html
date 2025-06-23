@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -181,7 +182,7 @@
       overflow: hidden;
     }
 
-    
+
 
     #slidesContainer {
       margin-top: 2rem;
@@ -631,6 +632,72 @@
       text-decoration: none;
       font-weight: 700;
     }
+
+    .contact-developer {
+      text-align: center;
+      padding: 1rem 0;
+      margin: 2rem 0 1rem 0;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: transparent;
+      color: var(--neon-green);
+      border: 2px solid var(--neon-green);
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: var(--transition);
+      box-shadow: 
+        0 0 4px rgba(0, 255, 0, 0.15),
+        inset 0 0 2px rgba(0, 255, 0, 0.05);
+      text-shadow: 0 0 2px var(--neon-green);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.4), transparent);
+      transition: left 0.5s;
+    }
+
+    .contact-link:hover {
+      background: rgba(0, 255, 0, 0.1);
+      transform: translateY(-2px);
+      box-shadow: 
+        0 0 8px rgba(0, 255, 0, 0.3),
+        0 0 16px rgba(0, 255, 0, 0.2);
+      color: white;
+      border-color: var(--neon-green);
+    }
+
+    .contact-link:hover::before {
+      left: 100%;
+    }
+
+    .contact-icon {
+      font-size: 1rem;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+    }
   </style>
 </head>
 
@@ -697,6 +764,7 @@
     </div>
   </div>
 
+  <script src="script.js"></script>
   <script type="module">
     // Your existing Supabase and app logic 
     import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -934,9 +1002,24 @@
       if (isLoggedIn) {
         const isAdmin = session.isAdmin || session.user?.email === adminEmail;
         document.getElementById('adminUpload').style.display = isAdmin ? 'block' : 'none';
+        
+        // Show visit counter for all logged in users
+        if (window.visitCounter) {
+          window.visitCounter.showCounter();
+          // Start real-time counter updates for admin
+          if (isAdmin && window.startRealTimeCounter) {
+            window.startRealTimeCounter();
+          }
+        }
+        
         setupRealTimeUpdates();
         loadSlides();
       } else {
+        // Hide visit counter when logged out
+        if (window.visitCounter) {
+          window.visitCounter.hideCounter();
+        }
+        
         // Cleanup real-time subscription when logged out
         if (realtimeChannel) {
           supabase.removeChannel(realtimeChannel);
@@ -1057,6 +1140,13 @@
 
     updateUI(session);
   </script>
+
+  <div class="contact-developer">
+    <a href="https://wa.me/+233533684041" target="_blank" rel="noopener noreferrer" class="contact-link">
+      <span class="contact-icon">📱</span>
+      CONTACT DEVELOPER
+    </a>
+  </div>
 
   <footer class="footer">
     <div class="footer-content">
