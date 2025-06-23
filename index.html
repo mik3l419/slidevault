@@ -785,6 +785,37 @@
     const adminEmail = "vaztomundo360@gmail.com";
     const bucketName = 'slides';
     const tableName = 'CourseTable';
+    
+    // Initialize visit counter with Supabase
+    let visitCounter = null;
+    
+    // Create visit counter table if it doesn't exist
+    async function initializeVisitCounter() {
+      try {
+        // Try to create the table (will fail silently if it already exists)
+        const { error } = await supabase.rpc('create_site_visits_table');
+        if (error && !error.message.includes('already exists')) {
+          console.log('Note: Could not create site_visits table automatically');
+        }
+        
+        visitCounter = new window.VisitCounter(supabase);
+        window.visitCounter = visitCounter;
+        
+        // Wait a moment for initialization
+        setTimeout(async () => {
+          await visitCounter.createVisitCounterElement();
+        }, 1000);
+        
+      } catch (error) {
+        console.log('Visit counter initialization:', error.message);
+        // Fallback: create a simple counter
+        visitCounter = new window.VisitCounter(supabase);
+        window.visitCounter = visitCounter;
+      }
+    }
+    
+    // Initialize on page load
+    initializeVisitCounter();
 
     // Auth handlers
     document.getElementById('loginBtn').onclick = login;
@@ -1013,10 +1044,10 @@
         document.getElementById('adminUpload').style.display = isAdmin ? 'block' : 'none';
         
         // Show visit counter for all logged in users
-        if (window.visitCounter) {
-          window.visitCounter.showCounter();
-          // Start real-time counter updates for admin
-          if (isAdmin && window.startRealTimeCounter) {
+        if (visitCounter) {
+          await visitCounter.showCounter();
+          // Start real-time counter updates
+          if (window.startRealTimeCounter) {
             window.startRealTimeCounter();
           }
         }
@@ -1025,8 +1056,8 @@
         loadSlides();
       } else {
         // Hide visit counter when logged out
-        if (window.visitCounter) {
-          window.visitCounter.hideCounter();
+        if (visitCounter) {
+          visitCounter.hideCounter();
         }
         
         // Cleanup real-time subscription when logged out
