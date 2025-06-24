@@ -936,13 +936,12 @@
       });
     }
 
-    // Combined view function - no automatic download
+    // Combined view function - simplified
     window.viewAndDownloadSlide = async function(url, filename) {
-      // Check if slide was already downloaded
-      if (isSlideDownloaded(url)) {
-        // Just open it directly without showing download options
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        
+      // Always just open the slide directly - no download checking
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      try {
         if (isMobile) {
           // For mobile, open directly in browser
           window.open(url, '_blank', 'noopener,noreferrer');
@@ -953,15 +952,15 @@
             alert('Please allow popups for this site to view slides, or try right-clicking the button and selecting "Open link in new tab".');
           }
         }
-        console.log('Opening previously downloaded slide:', filename);
-        return;
+        console.log('Slide opened successfully:', filename);
+        
+        // Mark as accessed for UI purposes
+        markSlideAsAccessed(url);
+        
+      } catch (error) {
+        console.error('Error opening slide:', error);
+        alert('Unable to open slide. Please check your internet connection.');
       }
-      
-      // If not downloaded, show options for first-time access
-      await openSlide(url, filename);
-      
-      // Mark as accessed
-      markSlideAsAccessed(url);
     };
 
     // Enhanced download function
@@ -988,6 +987,12 @@
         alert('Download failed. The slide should still be viewable in the new tab.');
       }
     };
+
+    // Function to check if slide was accessed before
+    function isSlideAccessed(url) {
+      const accessedSlides = new Set(JSON.parse(localStorage.getItem('accessedSlides') || '[]'));
+      return accessedSlides.has(url);
+    }
 
     // Function to mark slide as accessed (viewed) vs downloaded
     function markSlideAsAccessed(url) {
@@ -1217,7 +1222,7 @@
           </div>
           <div class="slide-actions">
             <button class="slide-btn" onclick="viewAndDownloadSlide('${slide.url}', '${slide.name}')">
-              <i>${isSlideDownloaded(slide.url) ? '📖' : '📑'}</i> ${isSlideDownloaded(slide.url) ? 'Open Slide' : 'Load Slide'}
+              <i>${isSlideAccessed(slide.url) ? '📖' : '📑'}</i> ${isSlideAccessed(slide.url) ? 'View Slide' : 'Open Slide'}
             </button>
           </div>
         `;
