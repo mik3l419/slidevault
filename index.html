@@ -766,10 +766,606 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    // Slide download cache to avoid re-downloading
+    const downloadedSlides = new Set(JSON.parse(localStorage.getItem('downloadedSlides') || '[]'));
+
+    // Function to check if slide was already downloaded
+    function isSlideDownloaded(url) {
+      return downloadedSlides.has(url);
+    }
+
+    // Function to mark slide as downloaded
+    function markSlideAsDownloaded(url) {
+      downloadedSlides.add(url);
+      localStorage.setItem('downloadedSlides', JSON.stringify([...downloadedSlides]));
+    }
+
+    // Enhanced slide opening function with app selection
+    window.openSlide = async function(url, filename) {
+      try {
+        // Check if user is on mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+          // Show app selection dialog for mobile users
+          const appChoice = await showAppSelectionDialog(filename);
+          
+          if (appChoice === 'browser') {
+            // Open in browser
+            window.open(url, '_blank', 'noopener,noreferrer');
+          } else if (appChoice === 'download') {
+            // Trigger download
+            await downloadSlide(url, filename);
+          } else if (appChoice === 'copy') {
+            // Copy URL to clipboard
+            try {
+              await navigator.clipboard.writeText(url);
+              alert('Slide URL copied to clipboard! You can paste it in your preferred app.');
+            } catch (err) {
+              prompt('Copy this URL to open in your preferred app:', url);
+            }
+          }
+        } else {
+          // Desktop - open directly
+          const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+          if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+            alert('Please allow popups for this site to view slides, or try right-clicking the button and selecting "Open link in new tab".');
+          }
+        }
+        
+        console.log('Slide opened successfully:', url);
+        
+      } catch (error) {
+        console.error('Error opening slide:', error);
+        alert('Unable to open slide. Please check your internet connection.');
+      }
+    };
+
+    // App selection dialog for mobile users
+    function showAppSelectionDialog(filename) {
+      return new Promise((resolve) => {
+        // Create modal dialog
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10000;
+          font-family: inherit;
+        `;
+        
+        const dialog = document.createElement('div');
+        dialog.style.cssText = `
+          background: linear-gradient(145deg, rgba(0, 17, 34, 0.95), rgba(17, 34, 68, 0.95));
+          border: 2px solid var(--neon-blue);
+          border-radius: 15px;
+          padding: 2rem;
+          max-width: 90%;
+          text-align: center;
+          box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        `;
+        
+        dialog.innerHTML = `
+          <h3 style="color: var(--neon-blue); margin-bottom: 1rem;">Open "${filename}"</h3>
+          <p style="color: #f1f5f9; margin-bottom: 2rem;">How would you like to view this slide?</p>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <button id="browserBtn" style="
+              padding: 1rem;
+              background: transparent;
+              color: var(--neon-blue);
+              border: 2px solid var(--neon-blue);
+              border-radius: 8px;
+              font-size: 1rem;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            ">📱 Open in Browser</button>
+            
+            <button id="downloadBtn" style="
+              padding: 1rem;
+              background: transparent;
+              color: var(--neon-green);
+              border: 2px solid var(--neon-green);
+              border-radius: 8px;
+              font-size: 1rem;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            ">💾 Download to Device</button>
+            
+            <button id="copyBtn" style="
+              padding: 1rem;
+              background: transparent;
+              color: var(--neon-pink);
+              border: 2px solid var(--neon-pink);
+              border-radius: 8px;
+              font-size: 1rem;
+              cursor: pointer;
+              transition: all 0.3s ease;
+            ">📋 Copy Link (Open in Any App)</button>
+            
+            <button id="cancelBtn" style="
+              padding: 0.5rem;
+              background: transparent;
+              color: var(--gray);
+              border: 1px solid var(--gray);
+              border-radius: 8px;
+              font-size: 0.9rem;
+              cursor: pointer;
+              margin-top: 1rem;
+            ">Cancel</button>
+          </div>
+        `;
+        
+        modal.appendChild(dialog);
+        document.body.appendChild(modal);
+        
+        // Add click handlers
+        dialog.querySelector('#browserBtn').onclick = () => {
+          document.body.removeChild(modal);
+          resolve('browser');
+        };
+        
+        dialog.querySelector('#downloadBtn').onclick = () => {
+          document.body.removeChild(modal);
+          resolve('download');
+        };
+        
+        dialog.querySelector('#copyBtn').onclick = () => {
+          document.body.removeChild(modal);
+          resolve('copy');
+        };
+        
+        dialog.querySelector('#cancelBtn').onclick = () => {
+          document.body.removeChild(modal);
+          resolve('cancel');
+        };
+        
+        // Close on outside click
+        modal.onclick = (e) => {
+          if (e.target === modal) {
+            document.body.removeChild(modal);
+            resolve('cancel');
+          }
+        };
+      });
+    }
+
+    // Combined view function - no automatic download
+    window.viewAndDownloadSlide = async function(url, filename) {
+      // Just open the slide - let user choose how
+      await openSlide(url, filename);
+      
+      // Mark as accessed (not downloaded) to avoid the "downloaded" message
+      markSlideAsAccessed(url);
+    };
+
+    // Enhanced download function
+    window.downloadSlide = async function(url, filename) {
+      try {
+        // Create a hidden anchor element for download
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = filename || 'slide.pdf';
+        downloadLink.style.display = 'none';
+        
+        // Add to document and trigger download
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        console.log('Download initiated for:', filename);
+        
+        // Mark as downloaded
+        markSlideAsDownloaded(url);
+        
+      } catch (error) {
+        console.error('Download error:', error);
+        alert('Download failed. The slide should still be viewable in the new tab.');
+      }
+    };
+
+    // Function to mark slide as accessed (viewed) vs downloaded
+    function markSlideAsAccessed(url) {
+      const accessedSlides = new Set(JSON.parse(localStorage.getItem('accessedSlides') || '[]'));
+      accessedSlides.add(url);
+      localStorage.setItem('accessedSlides', JSON.stringify([...accessedSlides]));
+    }
+  </script>
   <script type="module">
     // Your existing Supabase and app logic 
     import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://hkxdreqwqasmjnhmdqou.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhreGRyZXF3cWFzbWpuaG1kcW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2ODI5NTIsImV4cCI6MjA2NDI1ODk1Mn0.LFvfD3VMAc0EXY6WdUVXf65HwSnzvdLXO4oBT
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhreGRyZXF3cWFzbWpuaG1kcW91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2ODI5NTIsImV4cCI6MjA2NDI1ODk1Mn0.LFvfD3VMAc0EXY6WdUVXf65HwSnzvdLXO4oBT7wYrWo';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const adminEmail = "vaztomundo360@gmail.com";
+    const bucketName = 'slides';
+    const tableName = 'CourseTable';
+
+    // No visit counter needed
+
+    // Auth handlers
+    document.getElementById('loginBtn').onclick = login;
+    document.getElementById('logoutBtn').onclick = logout;
+    document.getElementById('uploadBtn').onclick = uploadFile;
+    const showPasswordCheckbox = document.getElementById('showPasswordCheckbox');
+    showPasswordCheckbox.addEventListener('change', function () {
+      const passwordInput = document.getElementById('passwordInput');
+      passwordInput.type = this.checked ? 'text' : 'password';
+    });
+
+    async function signUp() {
+      alert('Please use the login function with your assigned password.');
+    }
+
+    async function login() {
+      const password = document.getElementById('passwordInput').value;
+      if (!password) return alert('Password required.');
+
+      if (password === '1966') {
+        // Admin login
+        const adminSession = {user: {email: adminEmail}, isAdmin: true};
+        localStorage.setItem('userSession', JSON.stringify(adminSession));
+        updateUI(adminSession);
+      } else if (password === 'GCTU') {
+        // Viewer login
+        const viewerSession = {user: {email: 'viewer@gctu.edu'}, isAdmin: false};
+        localStorage.setItem('userSession', JSON.stringify(viewerSession));
+        updateUI(viewerSession);
+      } else {
+        alert('Invalid password. Use GCTU for viewer access.');
+      }
+    }
+
+    async function logout() {
+      localStorage.removeItem('userSession');
+      updateUI(null);
+    }
+
+    async function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      const course = document.getElementById('courseInput').value.trim();
+      const topic = document.getElementById('topicInput').value.trim();
+      if (!file || !course) return alert('Select file and enter course name.');
+
+      const filePath = `${Date.now()}_${file.name}`;
+      const {error: uploadError} = await supabase.storage.from(bucketName).upload(filePath, file);
+      if (uploadError) return alert('Upload error: ' + uploadError.message);
+      const {data: uploadedFile} = await supabase.storage.from(bucketName).getPublicUrl(filePath);
+
+      const {data: urlData} = supabase.storage.from(bucketName).getPublicUrl(filePath);
+      const publicUrl = urlData.publicUrl;
+
+      const {error: insertError} = await supabase.from(tableName).insert([
+        {name: file.name, url: publicUrl, course, topic}
+      ]);
+      if (insertError) return alert('Insert error: ' + insertError.message);
+
+      alert('Upload successful!');
+      await loadSlides();
+    }
+
+    async function loadSlides() {
+      try {
+        // Show loading indicator
+        const container = document.getElementById('slidesContainer');
+        container.innerHTML = '<div class="text-center"><p>Loading slides...</p></div>';
+
+        // Check cache first
+        const cacheKey = 'slidesCache';
+        const cacheTime = localStorage.getItem('slidesCacheTime');
+        const now = Date.now();
+
+        // Use cache if it's less than 5 minutes old
+        if (cacheTime && (now - parseInt(cacheTime)) < 300000) {
+          const cachedSlides = localStorage.getItem(cacheKey);
+          if (cachedSlides) {
+            window.allSlides = JSON.parse(cachedSlides);
+            renderSlides();
+            return;
+          }
+        }
+
+        // Fetch from database
+        const {data: slides, error} = await supabase.from(tableName).select('*').order('created_at', {ascending: false});
+
+        if (error) {
+          console.error('Slide load error:', error.message);
+          container.innerHTML = '<div class="text-center"><p>Error loading slides. Please try again.</p></div>';
+          return;
+        }
+
+        // Cache the results
+        localStorage.setItem(cacheKey, JSON.stringify(slides));
+        localStorage.setItem('slidesCacheTime', now.toString());
+
+        window.allSlides = slides;
+        renderSlides();
+      } catch (error) {
+        console.error('Unexpected error loading slides:', error);
+        const container = document.getElementById('slidesContainer');
+        container.innerHTML = '<div class="text-center"><p>Failed to load slides. Check your connection.</p></div>';
+      }
+    }
+
+    // Combined view and download function with caching
+    window.viewAndDownloadSlide = async function (url, filename) {
+      // First open/view the slide
+      await openSlide(url);
+
+      // Only download if not previously downloaded
+      if (!isSlideDownloaded(url)) {
+        await downloadSlide(url, filename);
+        markSlideAsDownloaded(url);
+      } else {
+        console.log('Slide already downloaded, opening from cache');
+      }
+    };
+
+    // Enhanced download function for mobile apps
+    window.downloadSlide = async function (url, filename) {
+      try {
+        // Create a hidden anchor element for download
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = filename;
+        downloadLink.style.display = 'none';
+        downloadLink.target = '_blank';
+        downloadLink.rel = 'noopener noreferrer';
+
+        // Add to document and trigger download
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        // Show success message
+        alert('Download started! Check your downloads folder.');
+
+      } catch (error) {
+        console.error('Download error:', error);
+
+        // Fallback: try to open in new window for mobile apps
+        try {
+          const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+          if (!newWindow) {
+            // If popup blocked, create temporary link
+            const tempLink = document.createElement('a');
+            tempLink.href = url;
+            tempLink.target = '_blank';
+            tempLink.rel = 'noopener noreferrer';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+          }
+        } catch (fallbackError) {
+          console.error('Fallback download failed:', fallbackError);
+          alert('Download failed. Please try again or check your internet connection.');
+        }
+      }
+    };
+
+    window.openSlide = async function (url) {
+      try {
+        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+        if (!newWindow) {
+          // If popup blocked, create temporary link
+          const tempLink = document.createElement('a');
+          tempLink.href = url;
+          tempLink.target = '_blank';
+          tempLink.rel = 'noopener noreferrer';
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          document.body.removeChild(tempLink);
+        }
+      } catch (error) {
+        console.error('Error opening slide:', error);
+        alert('Unable to open slide. Please check your internet connection.');
+      }
+    };
+
+    window.renderSlides = function renderSlides() {
+      const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+      const container = document.getElementById('slidesContainer');
+      container.innerHTML = '';
+
+      const filtered = (window.allSlides || []).filter(slide => {
+        return [slide.name, slide.course, slide.topic].some(
+          val => val?.toLowerCase().includes(searchTerm)
+        );
+      });
+
+      filtered.sort((a, b) => (a.topic || '').localeCompare(b.topic || ''));
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="text-center"><p>No matching slides found.</p></div>';
+        return;
+      }
+
+      filtered.forEach(slide => {
+        const item = document.createElement('div');
+        item.className = 'slide-item';
+        item.innerHTML = `
+          <div class="slide-info">
+            <h3>${slide.course || 'Untitled'}</h3>
+            <p><strong>Course:</strong> ${slide.topic || 'Unknown'}</p>
+          </div>
+          <div class="slide-actions">
+            <button class="slide-btn" onclick="viewAndDownloadSlide('${slide.url}', '${slide.name}')">
+              <i>📑</i> Load Slide
+            </button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    };
+
+    async function updateUI(session) {
+      const isLoggedIn = !!session;
+
+      // Always clear slides container first
+      document.getElementById('slidesContainer').innerHTML = '';
+
+      document.getElementById('authSection').classList.toggle('hidden', isLoggedIn);
+      document.getElementById('uploadSection').classList.toggle('hidden', !isLoggedIn);
+      document.getElementById('logoutBtn').classList.toggle('show', isLoggedIn);
+      document.getElementById('welcomeMessage').classList.toggle('hidden', !isLoggedIn);
+      document.getElementById('lectureSlidesHeading').classList.toggle('hidden', !isLoggedIn);
+
+      if (isLoggedIn) {
+        const isAdmin = session.isAdmin || session.user?.email === adminEmail;
+        document.getElementById('adminUpload').style.display = isAdmin ? 'block' : 'none';
+
+        // User is logged in
+
+        setupRealTimeUpdates();
+        loadSlides();
+      } else {
+        // User is logged out
+
+        // Cleanup real-time subscription when logged out
+        if (realtimeChannel) {
+          supabase.removeChannel(realtimeChannel);
+          realtimeChannel = null;
+        }
+        // Clear any cached data
+        localStorage.removeItem('slidesCache');
+        localStorage.removeItem('slidesCacheTime');
+        window.allSlides = [];
+      }
+    }
+
+    // Real-time updates setup
+    let realtimeChannel = null;
+
+    function setupRealTimeUpdates() {
+      if (realtimeChannel) {
+        supabase.removeChannel(realtimeChannel);
+      }
+
+      realtimeChannel = supabase        .channel('slides-changes')
+        .on('postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: tableName
+          },
+          (payload) => {
+            console.log('Real-time update received:', payload);
+            // Clear cache and refresh when database changes
+            localStorage.removeItem('slidesCache');
+            localStorage.removeItem('slidesCacheTime');
+            loadSlides();
+            showUpdateNotification();
+          }
+        )
+        .subscribe();
+    }
+
+    function showUpdateNotification() {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: var(--card-shadow);
+        z-index: 1000;
+        animation: slideInRight 0.3s ease-out;
+      `;
+      notification.innerHTML = `
+        <strong>📄 New slides available!</strong>
+        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">The page has been updated automatically.</p>
+      `;
+
+      document.body.appendChild(notification);
+
+      // Remove notification after 3 seconds
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.style.animation = 'slideOutRight 0.3s ease-out';
+          setTimeout(() => notification.remove(), 300);
+        }
+      }, 3000);
+    }
+
+    // Database keep-alive function
+    async function keepDatabaseAlive() {
+      try {
+        await supabase.from(tableName).select('count').limit(1);
+      } catch (error) {
+        console.log('Keep-alive ping failed:', error.message);
+      }
+    }
+
+    // Refresh slides function
+    window.refreshSlides = async function () {
+      localStorage.removeItem('slidesCache');
+      localStorage.removeItem('slidesCacheTime');
+      await loadSlides();
+    };
+
+    // Auto-refresh slides every 2 minutes as backup
+    setInterval(() => {
+      const session = localStorage.getItem('userSession');
+      if (session) {
+        refreshSlides();
+      }
+    }, 120000);
+
+    // Keep database active with periodic pings every 4 minutes
+    setInterval(keepDatabaseAlive, 240000);
+
+    // Check for saved session
+    const savedSession = localStorage.getItem('userSession');
+    let session = null;
+
+    // Validate saved session before using it
+    if (savedSession) {
+      try {
+        const parsedSession = JSON.parse(savedSession);
+        // Only accept valid sessions with proper structure
+        if (parsedSession && parsedSession.user && (parsedSession.isAdmin !== undefined)) {
+          session = parsedSession;
+        } else {
+          // Clear invalid session data
+          localStorage.removeItem('userSession');
+        }
+      } catch (e) {
+        // Clear corrupted session data
+        localStorage.removeItem('userSession');
+      }
+    }
+
+    updateUI(session);
+  </script>
+
+  <div class="contact-developer">
+    <a href="https://wa.me/+233533684041" target="_blank" rel="noopener noreferrer" class="contact-link">
+      <span class="contact-icon">💬</span>
+      Feedback
+    </a>
+  </div>
+
+  
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-text">
+        © 2025 <a href="#" class="footer-brand">SlideVault</a> by MiKe. All Rights Reserved.
+      </p>
+    </div>
+  </footer>
+</body>
+
+</html>
