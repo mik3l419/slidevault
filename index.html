@@ -938,10 +938,29 @@
 
     // Combined view function - no automatic download
     window.viewAndDownloadSlide = async function(url, filename) {
-      // Just open the slide - let user choose how
+      // Check if slide was already downloaded
+      if (isSlideDownloaded(url)) {
+        // Just open it directly without showing download options
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+          // For mobile, open directly in browser
+          window.open(url, '_blank', 'noopener,noreferrer');
+        } else {
+          // For desktop, open directly
+          const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+          if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
+            alert('Please allow popups for this site to view slides, or try right-clicking the button and selecting "Open link in new tab".');
+          }
+        }
+        console.log('Opening previously downloaded slide:', filename);
+        return;
+      }
+      
+      // If not downloaded, show options for first-time access
       await openSlide(url, filename);
       
-      // Mark as accessed (not downloaded) to avoid the "downloaded" message
+      // Mark as accessed
       markSlideAsAccessed(url);
     };
 
@@ -1198,7 +1217,7 @@
           </div>
           <div class="slide-actions">
             <button class="slide-btn" onclick="viewAndDownloadSlide('${slide.url}', '${slide.name}')">
-              <i>📑</i> Load Slide
+              <i>${isSlideDownloaded(slide.url) ? '📖' : '📑'}</i> ${isSlideDownloaded(slide.url) ? 'Open Slide' : 'Load Slide'}
             </button>
           </div>
         `;
